@@ -1,0 +1,62 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Hello, Quarto\"\n",
+        "format: html\n",
+        "---\n",
+        "\n",
+        "## Markdown\n",
+        "\n",
+        "Markdown is an easy to read and write text format:\n",
+        "\n",
+        "- It's _plain text_ so works well with version control\n",
+        "- It can be **rendered** into HTML, PDF, and more\n",
+        "- Learn more at: <https://quarto.org/docs/authoring/>\n",
+        "\n",
+        "## Code Cell\n",
+        "\n",
+        "Here is a Python code cell:"
+      ],
+      "id": "3a8aefbe"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import os\n",
+        "os.cpu_count()"
+      ],
+      "id": "e5617b1e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Equation\n",
+        "\n",
+        "Use LaTeX to write equations:\n",
+        "\n",
+        "$$\n",
+        "\\chi' = \\sum_{i=1}^n k_i s_i^2\n",
+        "$$"
+      ],
+      "id": "07ca48b1"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "datos-masivos",
+      "language": "python",
+      "display_name": "Python (Datos Masivos REAL)",
+      "path": "C:\\Users\\valen\\AppData\\Roaming\\jupyter\\kernels\\datos-masivos"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
