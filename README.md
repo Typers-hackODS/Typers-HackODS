@@ -23,7 +23,7 @@
 
 **Pregunta Central**
 
-¿Cuál es el impacto de la brecha salarial de género en la tasa de pobreza laboral a nivel nacional en México, y cómo se agudiza esta disparidad estructural en el sector informal?
+¿Cuál es el impacto de la brecha salarial de género en la tasa de pobreza laboral a nivel nacional en México?
 
 **Coherencia Narrativa**
 
