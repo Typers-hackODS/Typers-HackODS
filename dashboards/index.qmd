@@ -1,8 +1,10 @@
 ---
 title: "Trabajar no es suficiente: El género define quién cae en la pobreza"
+subtitle: "Análisis de la brecha salarial y su impacto en la pobreza laboral femenina en México."
 format:
   html:
     theme: cosmo
+    css: styles.css
     toc: false
     embed-resources: true
     page-layout: full
@@ -11,434 +13,6 @@ execute:
   warning: false
 jupyter: python3
 ---
-
-```{python}
-#| output: asis
-#| echo: false
-print('<style>')
-print('''
-/* ============================================================
-   VARIABLES & RESET
-   ============================================================ */
-:root {
-  --rosa:        #C05A6E;
-  --rosa-claro:  #E8517A;
-  --rosa-bg:     #f5dce2;
-  --rosa-header: #b85068;
-  --verde:       #8B9645;
-  --azul:        #2B4C6F;
-  --gris-claro:  #f7f5f3;
-  --gris-borde:  #e2ddd8;
-  --texto:       #1a1a1a;
-  --texto-muted: #6b6560;
-  --blanco:      #ffffff;
-
-  --font-display: 'Helvetica', Georgia, serif;
-  --font-body:    'Times New Roman', sans-serif;
-
-  --radius: 12px;
-  --sombra: 0 2px 12px rgba(0,0,0,0.07);
-}
-
-* { box-sizing: border-box; }
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: var(--font-body);
-  background: var(--gris-claro);
-  color: var(--texto);
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* Quarto overrides */
-#quarto-content,
-.page-layout-full #quarto-content, 
-#quarto-document-content, .quarto-container, div.quarto-post, .page-full {
-  padding: 0 !important;
-  margin: 0 !important;
-  max-width: 100% !important;
-}
-.quarto-title-block,
-h1.title,
-#title-block-header,
-.quarto-title-banner,
-header#quarto-header,
-#quarto-margin-sidebar,
-.quarto-sidebar,
-nav#quarto-sidebar,
-#quarto-toc-target,
-.toc-active {
-  display: none !important;
-}
-
-main-content, main#quarto-document-content {
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-body.fullcontent{
-  padding-top: 0 !important;
-}
-
-/* ============================================================
-   NAV HEADER
-   ============================================================ */
-.nav-header {
-  background: var(--rosa-header);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2.5rem;
-  height: 56px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 1px solid rgba(0,0,0,0.4);
-}
-.nav-header p {
-  margin: 0;
-  display: flex;
-  align-items: center;
-}
-.nav-header p a {
-  display: flex;
-  align-items: center;
-}
-.nav-header .nav-logo {
-  height: 40px;
-  width: auto;
-  object-fit: contain;
-  vertical-align: middle;
-  margin-right: 1rem;
-}
-.nav-header .nav-logo-unam {
-  height: 40px;
-  width: auto;
-  object-fit: contain;
-  vertical-align: middle;
-}
-.nav-header nav {
-  display: flex;
-  gap: 1.5rem;
-}
-.nav-header nav a {
-  color: white;
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  opacity: 0.75;
-  transition: opacity .2s;
-}
-.nav-header nav a:hover { opacity: 1; }
-/* ============================================================
-   PAGE WRAPPER
-   ============================================================ */
-.page-wrapper {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 1.5rem 2rem 4rem;
-}
-
-/* ============================================================
-   HERO SECTION
-   ============================================================ */
-.hero {
-  display: grid;
-  grid-template-columns: 1fr 280px;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  align-items: start;
-}
-.hero-left .ods-tags {
-  display: flex;
-  gap: 0.33rem;
-  margin-bottom: 1rem;
-}
-.ods-tag {
-  background: var(--rosa-bg);
-  color: var(--rosa-header);
-  font-size: 1rem;
-  font-weight: 700;
-  padding: 5px 10px;
-  border-radius: 20px;
-  letter-spacing: 0.03em;
-}
-.hero-left h1 {
-  font-family: var(--font-display);
-  font-size: 2.4rem;
-  line-height: 1.15;
-  color: var(--rosa-header);
-  margin: 0 0 1rem;
-  font-weight: 900;
-}
-.hero-left p {
-  font-size: 0.97rem;
-  line-height: 1.50;
-  color: var(--texto-muted);
-  margin: 0;
-  max-width: 560px;
-}
-.hero-right {
-  background: #c9d5d8;
-  border-radius: var(--radius);
-  padding: 1.2rem 1.2rem;
-  font-size: 0.82rem;
-  color: #3a4a50;
-  min-height: 130px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.hero-right .fuentes-title {
-  font-weight: 700;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 0.5rem;
-  color: #2b3e45;
-}
-.hero-right a { color: var(--azul); font-weight: 600; }
-.hero-right {
-  font-style: italic;
-  font-size: 0.78rem;
-  color: #556;
-  margin-top: 0.4rem;
-}
-.nota {
-  font-style: italic;
-  font-size: 0.28rem;
-  color: #556;
-  margin-top: 0.4rem;
-}
-
-/* ============================================================
-   KPI CARDS
-   ============================================================ */
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  margin-bottom: 2.5rem;
-}
-.kpi-card {
-  background: white;
-  border-radius: var(--radius);
-  padding: 0.8rem 1rem 0.8rem;
-  box-shadow: var(--sombra);
-  border-top: 3px solid var(--rosa-claro);
-}
-.kpi-card .kpi-label {
-  font-size: 0.68rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--rosa-claro);
-  margin-bottom: 0.3rem;
-}
-.kpi-card .kpi-value {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--texto);
-  line-height: 1;
-  margin-bottom: 0.5rem;
-}
-.kpi-card .kpi-desc {
-  font-size: 0.78rem;
-  color: var(--texto-muted);
-  line-height: 1.45;
-}
-
-/* ============================================================
-   SECTION TITLES
-   ============================================================ */
-.section-title {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--rosa-header);
-  margin: 0 0 0.3rem;
-}
-.section-subtitle {
-  font-size: 0.88rem;
-  color: var(--texto-muted);
-  margin: 0 0 1.5rem;
-}
-
-/* ============================================================
-   TWO-COLUMN LAYOUTS
-   ============================================================ */
-.two-col {
-  display: grid;
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
-  align-items: start;
-}
-.two-col.col-6-4 { grid-template-columns: 1fr 280px; }
-.two-col.col-4-6 { grid-template-columns: 280px 1fr; }
-.two-col.col-5-5 { grid-template-columns: 1fr 1fr; }
-
-/* ============================================================
-   CHART CARDS
-   ============================================================ */
-.chart-card {
-  background: white;
-  border-radius: var(--radius);
-  box-shadow: var(--sombra);
-  padding: 0.6rem 1.4rem;
-  overflow: hidden;
-  margin-bottom: 0.8rem;
-}
-.chart-card .chart-title {
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--texto-muted);
-  margin-bottom: 0.8rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid var(--gris-borde);
-}
-
-/* ============================================================
-   INTERPRETACIÓN CARD
-   ============================================================ */
-.interp-card {
-  background: white;
-  border-radius: var(--radius);
-  box-shadow: var(--sombra);
-  padding: 1.4rem 1.6rem;
-  font-size: 0.91rem;
-  line-height: 1.75;
-  color: var(--texto-muted);
-  border-left: 4px solid var(--rosa-claro);
-  margin-bottom: 2.5rem;
-}
-.interp-card strong { color: var(--texto); }
-
-/* ============================================================
-   THUMBNAIL GRID (miniaturas clickeables)
-   ============================================================ */
-.thumbs-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.thumb-card {
-  background: white;
-  border-radius: var(--radius);
-  box-shadow: var(--sombra);
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: border-color .2s, box-shadow .2s;
-  text-decoration: none;
-  color: inherit;
-  display: block;
-  scroll-behavior: smooth;
-}
-.thumb-card:hover {
-  border-color: var(--rosa-claro);
-  box-shadow: 0 4px 18px rgba(232,81,122,0.13);
-}
-.thumb-card .thumb-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--rosa-claro);
-  margin-bottom: 0.2rem;
-}
-.thumb-card .thumb-desc {
-  font-size: 0.8rem;
-  color: var(--texto-muted);
-  line-height: 1.4;
-}
-
-/* ============================================================
-   ACCIONES SECTION
-   ============================================================ */
-.acciones-intro {
-  background: var(--rosa-bg);
-  border-radius: var(--radius);
-  padding: 1.3rem 1.6rem;
-  margin-bottom: 2rem;
-  font-size: 0.95rem;
-  line-height: 1.7;
-  color: var(--texto);
-}
-.acciones-intro strong { color: var(--rosa-header); }
-
-.acciones-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.2rem;
-  margin-bottom: 2.5rem;
-}
-.accion-card {
-  background: white;
-  border-radius: var(--radius);
-  box-shadow: var(--sombra);
-  padding: 1.4rem 1.5rem;
-}
-.accion-card .accion-icon {
-  font-size: 1.5rem;
-  margin-bottom: 0.6rem;
-}
-.accion-card h3 {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--rosa-header);
-  margin: 0 0 0.8rem;
-}
-.accion-card p, .accion-card li {
-  font-size: 0.84rem;
-  line-height: 1.65;
-  color: var(--texto-muted);
-  margin: 0 0 0.5rem;
-}
-.accion-card strong { color: var(--texto); }
-
-/* ============================================================
-   FOOTER
-   ============================================================ */
-.footer-note {
-  text-align: center;
-  font-size: 0.78rem;
-  color: var(--texto-muted);
-  padding: 1.5rem 0 0;
-  border-top: 1px solid var(--gris-borde);
-  margin-top: 1rem;
-}
-
-/* ============================================================
-   SECTION ANCHOR (para navegación)
-   ============================================================ */
-.section-anchor {
-  scroll-margin-top: 70px;
-}
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-@media (max-width: 760px) {
-  .hero, .two-col.col-6-4, .two-col.col-4-6, .two-col.col-5-5,
-  .kpi-grid, .acciones-grid {
-    grid-template-columns: 1fr;
-  }
-  .hero-left h1 { font-size: 1.7rem; }
-  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-}
-''')
-print('</style>')
-```
 
 ```{python}
 #| include: false
@@ -463,8 +37,8 @@ ultimo_pob_for       = df_clean['pobreza_formal'].iloc[-1]
 ratio_informalidad   = round(ultimo_pob_inf / ultimo_pob_for, 1)
 pct_promedio_hist    = (1 - df_clean['brecha_salarial'].mean()) * 100
 
-COLOR_MASCULINO = '#8B9645'
-COLOR_FEMENINO  = '#E8517A'
+COLOR_MASCULINO = '#3f5cda'
+COLOR_FEMENINO  = '#e8517a'
 COLOR_AZUL      = '#2B4C6F'
 
 CHART_LAYOUT = dict(
@@ -590,20 +164,36 @@ fig.add_trace(go.Scatter(
     x=pd.concat([df_clean['fecha'], df_clean['fecha'][::-1]]),
     y=pd.concat([df_clean['ingreso_hombres'], df_clean['ingreso_mujeres'][::-1]]),
     fill='toself',
-    fillcolor='rgba(232, 81, 122, 0.07)',
+    fillcolor='rgba(217, 119, 6, 0.07)',
     line=dict(color='rgba(0,0,0,0)'),
     showlegend=False,
     hoverinfo='skip'
 ))
 fig.add_trace(go.Scatter(
     x=df_clean['fecha'], y=df_clean['ingreso_hombres'],
-    name='Hombres', line=dict(color=COLOR_MASCULINO, width=2.5), mode='lines',
+    name='Hombres (Mensual)', line=dict(color=COLOR_MASCULINO, width=1.5), mode='lines',
+    opacity=0.25, showlegend=True,
     hovertemplate='Hombres<br>%{x|%Y-%m}: $%{y:,.0f}<extra></extra>'
 ))
 fig.add_trace(go.Scatter(
     x=df_clean['fecha'], y=df_clean['ingreso_mujeres'],
-    name='Mujeres', line=dict(color=COLOR_FEMENINO, width=2.5), mode='lines',
+    name='Mujeres (Mensual)', line=dict(color=COLOR_FEMENINO, width=1.5), mode='lines',
+    opacity=0.25, showlegend=True,
     hovertemplate='Mujeres<br>%{x|%Y-%m}: $%{y:,.0f}<extra></extra>'
+))
+
+ma_hombres = df_clean['ingreso_hombres'].rolling(window=4, min_periods=1).mean()
+ma_mujeres = df_clean['ingreso_mujeres'].rolling(window=4, min_periods=1).mean()
+
+fig.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=ma_hombres,
+    name='Hombres — Tendencia (MA4)', line=dict(color=COLOR_MASCULINO, width=2.5), mode='lines',
+    hoverinfo='skip'
+))
+fig.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=ma_mujeres,
+    name='Mujeres — Tendencia (MA4)', line=dict(color=COLOR_FEMENINO, width=2.5), mode='lines',
+    hoverinfo='skip'
 ))
 
 fig.update_layout(
@@ -616,12 +206,26 @@ fig.update_layout(
         y=(df_clean['ingreso_hombres'].mean() + df_clean['ingreso_mujeres'].mean()) / 2
     )]
 )
-fig.show()
+
+fig.add_vline(x='2009-01-01', line_width=1, line_dash="dash", line_color="gray")
+fig.add_annotation(x='2009-01-01', y=8000, text="Crisis 2009", showarrow=False, font=dict(size=10, color="gray"), xanchor="left")
+
+fig.add_vline(x='2019-05-01', line_width=1, line_dash="dash", line_color="gray")
+fig.add_annotation(x='2019-05-01', y=8000, text="Reformas Paridad", showarrow=False, font=dict(size=10, color="gray"), xanchor="right")
+
+fig.add_vline(x='2020-03-01', line_width=1, line_dash="dash", line_color="gray")
+fig.add_annotation(x='2020-03-01', y=7500, text="COVID-19", showarrow=False, font=dict(size=10, color="gray"), xanchor="left")
+
+fig.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'ingreso_promedio', 'format': 'png'}})
 ```
+
+::: chart-interpretation
+La brecha entre los salarios promedio de hombres y mujeres se ha mantenido constante durante casi dos décadas. Esta es la raíz de la vulnerabilidad económica femenina: el punto de partida estructural es desigual.
+:::
 :::
 
 ::::::: thumbs-panel
-[[↓ Pobreza por sexo]{.thumb-label}  <br>  [Tasas de pobreza laboral entre hombres y mujeres ocupados por año.]{.thumb-desc}](#chart-pob-sexo){.thumb-card}
+[[↓ Pobreza por sexo]{.thumb-label}  <br>  [Tasas de pobreza laboral entre hombres y mujeres ocupados por año.]{.thumb-desc}](#chart-pob-sexo){.thumb-card .active}
 
 [[↓ Formal vs Informal]{.thumb-label}  <br>  [Cómo el tipo de empleo amplifica la vulnerabilidad económica.]{.thumb-desc}](#chart-informal){.thumb-card}
 
@@ -631,11 +235,6 @@ fig.show()
 :::::::
 :::::::::
 
-<!-- INTERPRETACIÓN -->
-
-::: interp-card
-La brecha salarial de género en México ha sido una constante estructural durante las últimas dos décadas. Aunque ha mostrado una **leve tendencia a la baja** — pasando de aproximadamente **27.9% en 2005 a 19.9% en 2024** — la diferencia absoluta de ingresos entre hombres y mujeres sigue siendo significativa. Los datos del INEGI (ENOE) revelan que el ingreso promedio mensual de los hombres se ha mantenido consistentemente entre **\$6,400 y \$8,100**, mientras que el de las mujeres oscila entre **\$4,900 y \$6,400**. Esta disparidad empuja sistemáticamente a más mujeres por debajo de la Línea de Pobreza Extrema por Ingresos definida por CONEVAL, evidenciando que la simple inserción laboral femenina **no basta** si persisten las condiciones de desigualdad salarial y la alta concentración en el sector informal.
-:::
 :::::::::::::::::::::
 
 ```{=html}
@@ -661,24 +260,34 @@ anual_hom = df_clean.groupby(df_clean['fecha'].dt.year)['pobreza_hombres'].mean(
 anios = anual_muj.index
 
 fig2 = go.Figure()
-fig2.add_trace(go.Bar(
+fig2.add_trace(go.Scatter(
     x=anios, y=anual_muj.values, name='Mujeres',
-    marker_color=COLOR_FEMENINO, opacity=0.85,
+    mode='lines',
+    fill='tozeroy',
+    line=dict(color=COLOR_FEMENINO, width=2.5),
+    fillcolor='rgba(217, 119, 6, 0.15)',
     hovertemplate='Mujeres %{x}: %{y:.1f}%<extra></extra>'
 ))
-fig2.add_trace(go.Bar(
+fig2.add_trace(go.Scatter(
     x=anios, y=anual_hom.values, name='Hombres',
-    marker_color=COLOR_MASCULINO, opacity=0.85,
+    mode='lines',
+    fill='tozeroy',
+    line=dict(color=COLOR_MASCULINO, width=2.5),
+    fillcolor='rgba(37, 99, 235, 0.15)',
     hovertemplate='Hombres %{x}: %{y:.1f}%<extra></extra>'
 ))
 fig2.update_layout(
     **CHART_LAYOUT,
-    barmode='group', bargap=0.15, bargroupgap=0.05, height=370,
+    height=370,
     xaxis=dict(title='Año', gridcolor='rgba(0,0,0,0.05)'),
     yaxis=dict(title='Pobreza laboral (%)', gridcolor='rgba(0,0,0,0.05)')
 )
-fig2.show()
+fig2.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'pobreza_sexo', 'format': 'png'}})
 ```
+
+::: chart-interpretation
+Consistentemente, un mayor porcentaje de mujeres ocupadas vive en pobreza laboral respecto a los hombres. A pesar de trabajar, su salario no es suficiente para cubrir la canasta alimentaria para ellas y sus familias.
+:::
 :::
 
 ::: {#chart-ratio .chart-card .section-anchor}
@@ -704,8 +313,12 @@ fig3.update_layout(
     xaxis=dict(title='Año', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
     yaxis=dict(title='Porcentaje (%)', gridcolor='rgba(0,0,0,0.05)', range=[50, 110])
 )
-fig3.show()
+fig3.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'ratio_salarial', 'format': 'png'}})
 ```
+
+::: chart-interpretation
+La paridad del 100% parece inalcanzable; las mujeres han ganado siempre menos del 85% de lo que gana un hombre por hacer el mismo esfuerzo. Cada punto porcentual menos significa comida y servicios básicos que una familia trabajadora no puede pagar.
+:::
 :::
 :::::
 
@@ -730,8 +343,12 @@ fig4.update_layout(
     xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
     yaxis=dict(title='Pobreza laboral (%)', gridcolor='rgba(0,0,0,0.05)')
 )
-fig4.show()
+fig4.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'formal_vs_informal', 'format': 'png'}})
 ```
+
+::: chart-interpretation
+La precariedad formal es casi inexistente en comparación con la informal. Esto penaliza severamente a las mujeres, obligadas a tomar empleos informales por las cargas de cuidado en sus hogares, cayendo de forma automática en la pobreza laboral.
+:::
 :::
 
 ::: chart-card
@@ -755,6 +372,25 @@ fig5.add_trace(go.Scatter(
 z = np.polyfit(df_clean['brecha_salarial'] * 100, df_clean['pobreza_mujeres'], 1)
 p = np.poly1d(z)
 x_line = np.linspace(df_clean['brecha_salarial'].min()*100, df_clean['brecha_salarial'].max()*100, 50)
+
+# Calcular R² e IC
+corr = np.corrcoef(df_clean['brecha_salarial'] * 100, df_clean['pobreza_mujeres'])[0, 1]
+r2 = corr ** 2
+
+std_dev = np.std(df_clean['pobreza_mujeres'] - p(df_clean['brecha_salarial'] * 100))
+y_upper = p(x_line) + std_dev * 1.96
+y_lower = p(x_line) - std_dev * 1.96
+
+fig5.add_trace(go.Scatter(
+    x=np.concatenate([x_line, x_line[::-1]]),
+    y=np.concatenate([y_upper, y_lower[::-1]]),
+    fill='toself',
+    fillcolor='rgba(217, 119, 6, 0.15)',
+    line=dict(color='rgba(255,255,255,0)'),
+    hoverinfo="skip",
+    showlegend=False
+))
+
 fig5.add_trace(go.Scatter(
     x=x_line, y=p(x_line), mode='lines',
     line=dict(color=COLOR_FEMENINO, width=2, dash='dash'),
@@ -763,12 +399,63 @@ fig5.add_trace(go.Scatter(
 fig5.update_layout(
     **CHART_LAYOUT, height=360,
     xaxis=dict(title='Brecha salarial (%)', gridcolor='rgba(0,0,0,0.05)'),
-    yaxis=dict(title='Pobreza laboral femenina (%)', gridcolor='rgba(0,0,0,0.05)')
+    yaxis=dict(title='Pobreza laboral femenina (%)', gridcolor='rgba(0,0,0,0.05)'),
+    annotations=[dict(
+        x=0.05, y=0.95, xref='paper', yref='paper',
+        text=f'R² = {r2:.2f} | Correlación de Pearson. No implica causalidad.',
+        showarrow=False,
+        align='left',
+        font=dict(size=10, color='gray'),
+        bgcolor='rgba(255,255,255,0.8)',
+        bordercolor='lightgray', borderwidth=1, borderpad=4
+    )]
 )
-fig5.show()
+fig5.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'correlacion_brecha', 'format': 'png'}})
 ```
+
+::: chart-interpretation
+La tendencia señala que cuando la brecha salarial se dispara, la incidencia de pobreza en mujeres aumenta. Ambas variables coexisten como síntomas de un mercado laboral que empobrece a quienes menos ganan de origen.
+:::
 :::
 :::::
+
+::: chart-card
+[CALCULADORA DE IMPACTO: EL COSTO DE LA BRECHA SALARIAL]{.chart-title}
+
+El impacto económico de la brecha salarial crece exponencialmente con el tiempo. Asumiendo la brecha histórica promedio del **25.1%** vista en los datos, aquí calculamos cuánto ingreso potencial pierde una mujer comparada con un hombre en el mismo puesto, asumiendo sueldos hipotéticos mensuales.
+
+```{python}
+sueldos = [8000, 15000, 25000, 40000]
+brecha_decimal = pct_promedio_hist / 100
+
+calc_df = pd.DataFrame({'Sueldo Mensual Base ($)': sueldos})
+calc_df['Pérdida a 5 años ($)'] = calc_df['Sueldo Mensual Base ($)'] * brecha_decimal * 12 * 5
+calc_df['Pérdida a 10 años ($)'] = calc_df['Sueldo Mensual Base ($)'] * brecha_decimal * 12 * 10
+calc_df['Pérdida a 20 años ($)'] = calc_df['Sueldo Mensual Base ($)'] * brecha_decimal * 12 * 20
+
+# Formatear números
+for col in calc_df.columns:
+    calc_df[col] = calc_df[col].apply(lambda x: f"${x:,.0f}")
+
+fig_table = go.Figure(data=[go.Table(
+    header=dict(values=list(calc_df.columns),
+                fill_color=COLOR_AZUL,
+                font=dict(color='white', size=11, family='DM Sans, Arial, sans-serif'),
+                align='center'),
+    cells=dict(values=[calc_df[col] for col in calc_df.columns],
+               fill_color=[['white', 'rgba(0,0,0,0.02)']*2]*4,
+               font=dict(color='#333', size=11, family='DM Sans, Arial, sans-serif'),
+               height=30,
+               align='center'))
+])
+fig_table.update_layout(margin=dict(l=0, r=0, t=10, b=0), height=150)
+fig_table.show(config={'displayModeBar': False})
+```
+
+::: chart-interpretation
+En un horizonte de tan solo 10 años, una mujer que percibe el equivalente a un sueldo mensual "base" de $15,000 MXN,  pierde casi medio millón de pesos en total respecto a su colega hombre. Ese es el verdadero costo que frena la independencia financiera y vulnera a miles de familias.
+:::
+:::
 ::::::::::
 
 ```{=html}
@@ -810,8 +497,12 @@ fig6.update_layout(
     xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
     yaxis=dict(title='Hogares en pobreza laboral (%)', gridcolor='rgba(0,0,0,0.05)')
 )
-fig6.show()
+fig6.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'jefatura_hogar', 'format': 'png'}})
 ```
+
+::: chart-interpretation
+Si una mujer es jefa de hogar, la probabilidad de que su familia esté en pobreza laboral supera ampliamente a los hogares liderados por hombres. Esto muestra una profunda debilidad estructural en el sustento de miles de familias.
+:::
 :::
 
 ::: chart-card
@@ -837,8 +528,12 @@ fig7.update_layout(
     xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
     yaxis=dict(title='Brecha salarial (%)', gridcolor='rgba(0,0,0,0.05)')
 )
-fig7.show()
+fig7.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'evolucion_brecha', 'format': 'png'}})
 ```
+
+::: chart-interpretation
+La tendencia secular muestra estancamiento, la desigualdad de género económica no está disminuyendo de la manera esperada. Las medidas existentes no logran penetrar la inercia del mercado.
+:::
 :::
 :::::
 
@@ -848,39 +543,51 @@ Los datos evidencian una realidad estructural: **la pobreza laboral en México t
 
 :::::: acciones-grid
 ::: accion-card
-[🏛️]{.accion-icon}
+[🏛️ Política Pública]{.accion-category} 
 
-### Política Pública
+### 1. Formalización del empleo femenino
+Solo el 0.8% de trabajadores formales están en pobreza laboral, frente al 20.1% en informalidad. Programas de formalización orientados a mujeres reducirían drásticamente la pobreza.
+[Impacto Alto]{.badge-impacto .rojo} [Corto / Mediano Plazo]{.badge-plazo}
 
-**1. Formalización del empleo femenino** — Solo el 0.8% de trabajadores formales están en pobreza laboral, frente al 20.1% en informalidad. Programas de formalización orientados a mujeres reducirían drásticamente la pobreza.
+### 2. Legislación de equidad salarial
+Implementar leyes de transparencia salarial que obliguen a las empresas a reportar brechas y corregirlas.
+[Impacto Alto]{.badge-impacto .rojo} [Mediano Plazo]{.badge-plazo}
 
-**2. Legislación de equidad salarial** — Implementar leyes de transparencia salarial que obliguen a las empresas a reportar brechas y corregirlas.
-
-**3. Sistema nacional de cuidados** — La informalidad femenina está ligada a las responsabilidades de cuidado. Un sistema de cuidados liberaría a las mujeres para acceder a empleos formales.
+### 3. Sistema nacional de cuidados
+La informalidad femenina está ligada a las responsabilidades de cuidado. Un sistema de cuidados liberaría a las mujeres para acceder a empleos formales.
+[Impacto Alto]{.badge-impacto .rojo} [Largo Plazo]{.badge-plazo}
 :::
 
 ::: accion-card
-[📊]{.accion-icon}
+[📊 Investigación y Datos]{.accion-category}
 
-### Investigación y Datos
+### 4. Monitoreo trimestral
+Tableros como este deben institucionalizarse para dar seguimiento continuo a la intersección entre género y pobreza laboral.
+[Impacto Medio]{.badge-impacto .amarillo} [Corto Plazo]{.badge-plazo}
 
-**4. Monitoreo trimestral** — Tableros como este deben institucionalizarse para dar seguimiento continuo a la intersección entre género y pobreza laboral.
+### 5. Desagregación interseccional
+Profundizar el análisis por etnicidad, región, edad y nivel educativo para identificar a las mujeres más vulnerables.
+[Impacto Medio]{.badge-impacto .amarillo} [Mediano Plazo]{.badge-plazo}
 
-**5. Desagregación interseccional** — Profundizar el análisis por etnicidad, región, edad y nivel educativo para identificar a las mujeres más vulnerables.
-
-**6. Evaluación de impacto** — Medir el efecto causal de programas existentes de empoderamiento económico femenino sobre la reducción de pobreza laboral.
+### 6. Evaluación de impacto
+Medir el efecto causal de programas existentes de empoderamiento económico femenino sobre la reducción de pobreza laboral.
+[Impacto Medio]{.badge-impacto .amarillo} [Largo Plazo]{.badge-plazo}
 :::
 
 ::: accion-card
-[🤝]{.accion-icon}
+[🤝 Sociedad y Sector Privado]{.accion-category}
 
-### Sociedad y Sector Privado
+### 7. Certificaciones de equidad
+Promover sellos de equidad salarial en empresas, con incentivos fiscales para quienes demuestren paridad.
+[Impacto Alto]{.badge-impacto .rojo} [Mediano Plazo]{.badge-plazo}
 
-**7. Certificaciones de equidad** — Promover sellos de equidad salarial en empresas, con incentivos fiscales para quienes demuestren paridad.
+### 8. Educación financiera con perspectiva de género
+Programas comunitarios que empoderen a las mujeres en negociación salarial.
+[Impacto Bajo]{.badge-impacto .verde} [Corto Plazo]{.badge-plazo}
 
-**8. Educación financiera con perspectiva de género** — Programas comunitarios que empoderen a las mujeres en negociación salarial.
-
-**9. Transparencia ciudadana** — Herramientas de datos abiertos que permitan monitorear y exigir rendición de cuentas sobre equidad de género en el mercado laboral.
+### 9. Transparencia ciudadana
+Herramientas de datos abiertos que permitan monitorear y exigir rendición de cuentas sobre equidad de género en el mercado laboral.
+[Impacto Medio]{.badge-impacto .amarillo} [Mediano Plazo]{.badge-plazo}
 :::
 ::::::
 
