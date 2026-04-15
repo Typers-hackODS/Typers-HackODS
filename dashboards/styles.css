@@ -253,6 +253,13 @@ body.fullcontent{
   color: var(--rosa-header);
   margin: 0 0 0.3rem;
 }
+
+/* Sub-section titles that appear after a chart row get extra breathing room */
+.two-col + .section-title,
+.chart-card + .section-title {
+  margin-top: 2.5rem;
+}
+
 .section-subtitle {
   font-size: 0.88rem;
   color: var(--texto-muted);
@@ -431,7 +438,7 @@ body.fullcontent{
 }
 .accion-card strong { color: var(--texto); }
 
-.badge-impacto, .badge-plazo {
+.badge-impacto { 
   display: inline-block;
   font-size: 0.68rem;
   font-weight: 700;
@@ -441,11 +448,79 @@ body.fullcontent{
   border-radius: 4px;
   margin-right: 0.4rem;
   margin-bottom: 1rem;
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
 }
-.badge-impacto.rojo { background-color: #fee2e2; color: #b91c1c; }
-.badge-impacto.amarillo { background-color: #fef9c3; color: #b45309; }
-.badge-impacto.verde { background-color: #dcfce7; color: #15803d; }
-.badge-plazo { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
+/* ============================================================
+   CTA BLOCK (llamado a la acción entre secciones)
+   ============================================================ */
+.cta-block {
+  background: linear-gradient(135deg, var(--rosa-header) 0%, #8B2252 60%, #5a1a3a 100%);
+  color: white;
+  border-radius: var(--radius);
+  padding: 3rem 3.5rem;
+  margin: 3.5rem 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  line-height: 1.75;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 12px 48px rgba(184, 80, 104, 0.35);
+  border: 2px solid rgba(255, 214, 224, 0.2);
+  overflow: hidden;
+}
+.cta-block::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  background: linear-gradient(135deg, rgba(255,214,224,0.3), transparent 40%, transparent 60%, rgba(255,214,224,0.15));
+  border-radius: calc(var(--radius) + 2px);
+  z-index: 0;
+  pointer-events: none;
+}
+.cta-block > * {
+  position: relative;
+  z-index: 1;
+}
+.cta-eyebrow {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #ffd6e0;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.35rem 1.2rem;
+  border-radius: 20px;
+  margin-bottom: 0.5rem;
+}
+.cta-headline,
+.cta-block h2 {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 900;
+  line-height: 1.35;
+  color: white;
+  margin: 0.5rem auto 1.2rem;
+  max-width: 800px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border: none;
+  padding: 0;
+}
+.cta-block strong {
+  color: #ffd6e0;
+  font-weight: 900;
+}
+.cta-block p {
+  margin: 0;
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.92);
+}
 
 /* ============================================================
    FOOTER

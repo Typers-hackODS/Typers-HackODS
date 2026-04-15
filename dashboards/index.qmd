@@ -79,6 +79,7 @@ CHART_LAYOUT = dict(
 ```
 
 
+
 <!-- ============================================================
      NAV HEADER
      ============================================================ -->
@@ -99,7 +100,7 @@ CHART_LAYOUT = dict(
 :::::::::::::::::::::::::::::::::::::::: page-wrapper
 
 <!-- ============================================================
-     SECCIÓN: DATOS
+     SECCIÓN 1: DATOS — Contexto y panorama general
      ============================================================ -->
 
 
@@ -114,7 +115,7 @@ CHART_LAYOUT = dict(
 
 ## Trabajar no es suficiente: El género define quién cae en la pobreza {.section-title style="font-family:'Helvetica',serif;font-size:2.4rem;line-height:1.15;color:#b85068;font-weight:900;margin:0 0 1rem;"}
 
-**En México, el empleo no garantiza una vida digna para todos.** Mientras persista la brecha salarial, las mujeres seguirán siendo las más vulnerables a la _pobreza laboral_. Este análisis explora cómo la discriminación de ingresos y la informalidad actúan como trampas económicas que impiden alcanzar el fin de la pobreza sin antes lograr una verdadera igualdad de género.
+**En México, el empleo no garantiza una vida digna para todos.** Mientras persista la brecha salarial, las mujeres seguirán siendo las más vulnerables a la _pobreza laboral_. Este análisis explora cómo la discriminación de ingresos actúa como trampa económica que impide alcanzar el fin de la pobreza sin antes lograr una verdadera igualdad de género.
 
 
 ::::
@@ -179,10 +180,80 @@ Markdown(f'<div class="kpi-value">{ratio_informalidad}:1</div><div class="kpi-de
 ¿La pobreza viene de la brecha salarial?
 :::
 
-[Trazando la diferencia histórica entre el ingreso de las mujeres y los hombres.]{.section-subtitle}
+[Comparando las tasas de pobreza laboral entre hombres y mujeres: la diferencia revela una desigualdad persistente.]{.section-subtitle}
 
 ::::::::: {.two-col .col-6-4}
-::: chart-card
+::: {#chart-pob-sexo .chart-card .section-anchor}
+[POBREZA LABORAL POR SEXO (PROMEDIO ANUAL)]{.chart-title}
+
+```{python}
+anual_muj = df_clean.groupby(df_clean['fecha'].dt.year)['pobreza_mujeres'].mean()
+anual_hom = df_clean.groupby(df_clean['fecha'].dt.year)['pobreza_hombres'].mean()
+anios = anual_muj.index
+
+fig2 = go.Figure()
+fig2.add_trace(go.Scatter(
+    x=anios, y=anual_muj.values, name='Mujeres',
+    mode='lines',
+    fill='tozeroy',
+    line=dict(color=COLOR_FEMENINO, width=2.5),
+    fillcolor='rgba(217, 119, 6, 0.15)',
+    hovertemplate='Mujeres %{x}: %{y:.1f}%<extra></extra>'
+))
+fig2.add_trace(go.Scatter(
+    x=anios, y=anual_hom.values, name='Hombres',
+    mode='lines',
+    fill='tozeroy',
+    line=dict(color=COLOR_MASCULINO, width=2.5),
+    fillcolor='rgba(37, 99, 235, 0.15)',
+    hovertemplate='Hombres %{x}: %{y:.1f}%<extra></extra>'
+))
+fig2.update_layout(
+    **CHART_LAYOUT,
+    height=400,
+    xaxis=dict(title='Año', gridcolor='rgba(0,0,0,0.05)'),
+    yaxis=dict(title='Pobreza laboral (%)', gridcolor='rgba(0,0,0,0.05)')
+)
+fig2.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'pobreza_sexo', 'format': 'png'}})
+```
+
+::: chart-interpretation
+Consistentemente, un mayor porcentaje de mujeres ocupadas vive en pobreza laboral respecto a los hombres. A pesar de trabajar, su salario no es suficiente para cubrir la canasta alimentaria para ellas y sus familias.
+:::
+:::
+
+::::::: thumbs-panel
+[[↓ Ingreso promedio]{.thumb-label}  <br>  [Comparación del ingreso mensual entre hombres y mujeres a lo largo de dos décadas.]{.thumb-desc}](#chart-ingreso){.thumb-card .active}
+
+[[↓ Ratio salarial]{.thumb-label}  <br>  [Proporción histórica del ingreso femenino respecto al masculino.]{.thumb-desc}](#chart-ratio){.thumb-card}
+
+[[↓ Jefatura de hogar]{.thumb-label}  <br>  [Pobreza laboral analizada por sexo del jefe o jefa de familia.]{.thumb-desc}](#chart-jefatura){.thumb-card}
+
+[[↓ Evolución de la brecha]{.thumb-label}  <br>  [Cómo ha cambiado el porcentaje de la brecha salarial a lo largo del tiempo.]{.thumb-desc}](#chart-brecha-evol){.thumb-card}
+
+[[↓ Formal vs Informal]{.thumb-label}  <br>  [Cómo el tipo de empleo amplifica la vulnerabilidad económica.]{.thumb-desc}](#chart-informal){.thumb-card}
+
+[[↓ ¿Dónde es más profunda la brecha?]{.thumb-label}  <br>  [Análisis de la brecha salarial por entidad federativa.]{.thumb-desc}](#entidades){.thumb-card}
+:::::::
+:::::::::
+
+:::::::::::::::::::::
+
+<!-- ============================================================
+     SECCIÓN 2: BRECHA — Midiendo la desigualdad salarial
+     ============================================================ -->
+
+:::::::::: {#brecha .section-anchor}
+::: section-title
+Por cada salario de un hombre, ¿cuánto gana una mujer?
+:::
+
+[Visualizando la disparidad. Históricamente, las mujeres en México perciben menos del 80% del salario masculino.]{.section-subtitle}
+
+<!-- FILA 1: Ingreso promedio mensual + Ratio salarial (responden cuánto gana una mujer vs un hombre) -->
+
+::::: {.two-col .col-5-5}
+::: {#chart-ingreso .chart-card .section-anchor}
 [INGRESO PROMEDIO MENSUAL: HOMBRES VS MUJERES (2005–2024)]{.chart-title}
 
 ```{python}
@@ -226,7 +297,7 @@ fig.add_trace(go.Scatter(
 
 fig.update_layout(
     **CHART_LAYOUT,
-    height=400,
+    height=380,
     xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
     yaxis=dict(title='Ingreso promedio mensual ($)', gridcolor='rgba(0,0,0,0.05)', range=[4500, 8800]),
     annotations=[dict(
@@ -252,70 +323,6 @@ La brecha entre los salarios promedio de hombres y mujeres se ha mantenido const
 :::
 :::
 
-::::::: thumbs-panel
-[[↓ Pobreza por sexo]{.thumb-label}  <br>  [Tasas de pobreza laboral entre hombres y mujeres ocupados por año.]{.thumb-desc}](#chart-pob-sexo){.thumb-card .active}
-
-[[↓ Formal vs Informal]{.thumb-label}  <br>  [Cómo el tipo de empleo amplifica la vulnerabilidad económica.]{.thumb-desc}](#chart-informal){.thumb-card}
-
-[[↓ Ratio salarial]{.thumb-label}  <br>  [Proporción histórica del ingreso femenino respecto al masculino.]{.thumb-desc}](#chart-ratio){.thumb-card}
-
-[[↓ Jefatura de hogar]{.thumb-label}  <br>  [Pobreza laboral analizada por sexo del jefe o jefa de familia.]{.thumb-desc}](#chart-jefatura){.thumb-card}
-:::::::
-:::::::::
-
-:::::::::::::::::::::
-
-<!-- ============================================================
-     SECCIÓN: BRECHA
-     ============================================================ -->
-
-:::::::::: {#brecha .section-anchor}
-::: section-title
-Por cada salario de un hombre, ¿cuánto gana una mujer?
-:::
-
-[Visualizando la disparidad. Históricamente, las mujeres en México perciben menos del 80% del salario masculino.]{.section-subtitle}
-
-::::: {.two-col .col-4-6}
-::: {#chart-pob-sexo .chart-card .section-anchor}
-[POBREZA LABORAL POR SEXO (PROMEDIO ANUAL)]{.chart-title}
-
-```{python}
-anual_muj = df_clean.groupby(df_clean['fecha'].dt.year)['pobreza_mujeres'].mean()
-anual_hom = df_clean.groupby(df_clean['fecha'].dt.year)['pobreza_hombres'].mean()
-anios = anual_muj.index
-
-fig2 = go.Figure()
-fig2.add_trace(go.Scatter(
-    x=anios, y=anual_muj.values, name='Mujeres',
-    mode='lines',
-    fill='tozeroy',
-    line=dict(color=COLOR_FEMENINO, width=2.5),
-    fillcolor='rgba(217, 119, 6, 0.15)',
-    hovertemplate='Mujeres %{x}: %{y:.1f}%<extra></extra>'
-))
-fig2.add_trace(go.Scatter(
-    x=anios, y=anual_hom.values, name='Hombres',
-    mode='lines',
-    fill='tozeroy',
-    line=dict(color=COLOR_MASCULINO, width=2.5),
-    fillcolor='rgba(37, 99, 235, 0.15)',
-    hovertemplate='Hombres %{x}: %{y:.1f}%<extra></extra>'
-))
-fig2.update_layout(
-    **CHART_LAYOUT,
-    height=370,
-    xaxis=dict(title='Año', gridcolor='rgba(0,0,0,0.05)'),
-    yaxis=dict(title='Pobreza laboral (%)', gridcolor='rgba(0,0,0,0.05)')
-)
-fig2.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'pobreza_sexo', 'format': 'png'}})
-```
-
-::: chart-interpretation
-Consistentemente, un mayor porcentaje de mujeres ocupadas vive en pobreza laboral respecto a los hombres. A pesar de trabajar, su salario no es suficiente para cubrir la canasta alimentaria para ellas y sus familias.
-:::
-:::
-
 ::: {#chart-ratio .chart-card .section-anchor}
 [¿CUÁNTO GANAN LAS MUJERES RESPECTO A LOS HOMBRES? (%)]{.chart-title}
 
@@ -335,7 +342,7 @@ fig3.add_hline(y=pct_promedio_hist, line_dash="dot", line_color=COLOR_FEMENINO, 
     annotation_position="bottom right", annotation_font_size=10,
     annotation_font_color=COLOR_FEMENINO)
 fig3.update_layout(
-    **CHART_LAYOUT, height=370,
+    **CHART_LAYOUT, height=380,
     xaxis=dict(title='Año', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
     yaxis=dict(title='Porcentaje (%)', gridcolor='rgba(0,0,0,0.05)', range=[50, 110])
 )
@@ -347,6 +354,94 @@ La paridad del 100% parece inalcanzable; las mujeres han ganado siempre menos de
 :::
 :::
 :::::
+
+<!-- FILA 2: Jefatura de hogar + Evolución de la brecha (impacto en hogares y persistencia) -->
+
+::: section-title
+La pobreza tiene rostro de mujer
+:::
+
+[Cuando la brecha se traduce en hambre: la pobreza laboral afecta desproporcionadamente a los hogares liderados por mujeres y la brecha no cede.]{.section-subtitle}
+
+::::: {.two-col .col-5-5}
+::: {#chart-jefatura .chart-card .section-anchor}
+[POBREZA LABORAL POR JEFATURA DE HOGAR Y SEXO]{.chart-title}
+
+```{python}
+fig6 = go.Figure()
+fig6.add_trace(go.Scatter(
+    x=pd.concat([df_clean['fecha'], df_clean['fecha'][::-1]]),
+    y=pd.concat([df_clean['pob_jefatura_mujeres'], df_clean['pob_jefatura_hombres'][::-1]]),
+    fill='toself', fillcolor='rgba(232,81,122,0.08)',
+    line=dict(color='rgba(0,0,0,0)'), showlegend=False, hoverinfo='skip'
+))
+fig6.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=df_clean['pob_jefatura_mujeres'],
+    name='Jefatura Femenina', line=dict(color=COLOR_FEMENINO, width=2.5),
+    hovertemplate='Jef. Femenina<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
+))
+fig6.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=df_clean['pob_jefatura_hombres'],
+    name='Jefatura Masculina', line=dict(color=COLOR_MASCULINO, width=2.5),
+    hovertemplate='Jef. Masculina<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
+))
+fig6.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=df_clean['pob_jefatura_nal'],
+    name='Nacional', line=dict(color=COLOR_AZUL, width=1.5, dash='dot'),
+    hovertemplate='Nacional<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
+))
+fig6.update_layout(
+    **CHART_LAYOUT, height=380,
+    xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
+    yaxis=dict(title='Hogares en pobreza laboral (%)', gridcolor='rgba(0,0,0,0.05)')
+)
+fig6.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'jefatura_hogar', 'format': 'png'}})
+```
+
+::: chart-interpretation
+Si una mujer es jefa de hogar, la probabilidad de que su familia esté en pobreza laboral supera ampliamente a los hogares liderados por hombres. Esto muestra una profunda debilidad estructural en el sustento de miles de familias.
+:::
+:::
+
+::: {#chart-brecha-evol .chart-card .section-anchor}
+[EVOLUCIÓN DE LA BRECHA SALARIAL (%)]{.chart-title}
+
+```{python}
+brecha_pct = df_clean['brecha_salarial'] * 100
+fig7 = go.Figure()
+fig7.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=brecha_pct,
+    name='Brecha Salarial', line=dict(color=COLOR_FEMENINO, width=2.5),
+    fill='tozeroy', fillcolor='rgba(232,81,122,0.1)', mode='lines',
+    hovertemplate='Brecha: %{y:.1f}%<br>%{x|%Y-%m}<extra></extra>'
+))
+rolling = brecha_pct.rolling(window=4, min_periods=1).mean()
+fig7.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=rolling,
+    name='Tendencia (12M)', line=dict(color=COLOR_AZUL, width=2, dash='dash'),
+    mode='lines', hovertemplate='Tendencia: %{y:.1f}%<br>%{x|%Y-%m}<extra></extra>'
+))
+fig7.update_layout(
+    **CHART_LAYOUT, height=380,
+    xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
+    yaxis=dict(title='Brecha salarial (%)', gridcolor='rgba(0,0,0,0.05)')
+)
+fig7.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'evolucion_brecha', 'format': 'png'}})
+```
+
+::: chart-interpretation
+La tendencia secular muestra estancamiento, la desigualdad de género económica no está disminuyendo de la manera esperada. Las medidas existentes no logran penetrar la inercia del mercado.
+:::
+:::
+:::::
+
+<!-- FILA 3: Formal vs Informal + Correlación (mecanismos que explican la pobreza) -->
+
+::: section-title
+Los mecanismos de la trampa: informalidad y correlación
+:::
+
+[La informalidad laboral y la brecha salarial no son problemas aislados — se retroalimentan para mantener a las mujeres en la pobreza.]{.section-subtitle}
 
 ::::: {.two-col .col-5-5}
 ::: {#chart-informal .chart-card .section-anchor}
@@ -365,7 +460,7 @@ fig4.add_trace(go.Scatter(
     hovertemplate='Formal<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
 ))
 fig4.update_layout(
-    **CHART_LAYOUT, height=360,
+    **CHART_LAYOUT, height=380,
     xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
     yaxis=dict(title='Pobreza laboral (%)', gridcolor='rgba(0,0,0,0.05)')
 )
@@ -423,7 +518,7 @@ fig5.add_trace(go.Scatter(
     name='Tendencia', hoverinfo='skip'
 ))
 fig5.update_layout(
-    **CHART_LAYOUT, height=360,
+    **CHART_LAYOUT, height=380,
     xaxis=dict(title='Brecha salarial (%)', gridcolor='rgba(0,0,0,0.05)'),
     yaxis=dict(title='Pobreza laboral femenina (%)', gridcolor='rgba(0,0,0,0.05)'),
     annotations=[dict(
@@ -445,7 +540,9 @@ La tendencia señala que cuando la brecha salarial se dispara, la incidencia de 
 :::
 :::::
 
-::: chart-card
+<!-- TABLA: Calculadora de impacto — ancho completo -->
+
+::: {#calculadora .chart-card}
 [CALCULADORA DE IMPACTO: EL COSTO DE LA BRECHA SALARIAL]{.chart-title}
 
 El impacto económico de la brecha salarial crece exponencialmente con el tiempo. Asumiendo la brecha histórica promedio del **25.1%** vista en los datos, aquí calculamos cuánto ingreso potencial pierde una mujer comparada con un hombre en el mismo puesto, asumiendo sueldos hipotéticos mensuales.
@@ -485,7 +582,7 @@ En un horizonte de tan solo 10 años, una mujer que percibe el equivalente a un 
 ::::::::::
 
 <!-- ============================================================
-     SECCIÓN: BRECHA POR ENTIDAD + PROYECCIONES
+     SECCIÓN 3: ENTIDADES — Dimensión geográfica
      ============================================================ -->
 
 
@@ -560,7 +657,7 @@ Hidalgo, Colima y Guerrero encabezan la disparidad con brechas superiores al 25%
 ::::::::::
 
 <!-- ============================================================
-     SECCIÓN: PROYECCIONES
+     SECCIÓN 4: PROYECCIONES — El futuro de la brecha
      ============================================================ -->
 
 :::::::::: {#proyecciones .section-anchor}
@@ -570,8 +667,11 @@ Hidalgo, Colima y Guerrero encabezan la disparidad con brechas superiores al 25%
 
 [Cuatro modelos estadísticos coinciden en un diagnóstico preocupante: sin intervención estructural, la brecha salarial de género no se cerrará por inercia del mercado en la próxima década.]{.section-subtitle}
 
+<!-- Proyecciones lado a lado: Brecha + Pobreza femenina -->
+
+::::: {.two-col .col-5-5}
 ::: chart-card
-[PROYECCIÓN DE LA BRECHA SALARIAL 2025–2034: COMPARACIÓN DE MODELOS]{.chart-title}
+[PROYECCIÓN DE LA BRECHA SALARIAL 2025–2034]{.chart-title}
 
 ```{python}
 import plotly.graph_objects as go
@@ -654,12 +754,12 @@ fig_proy.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename
 ```
 
 ::: chart-interpretation
-Los cuatro modelos coinciden en que la brecha no se cerrará espontáneamente: las proyecciones oscilan entre el **7.6%** (escenario optimista de SARIMA) y el **24.3%** (Regresión Polinómica) para 2034. Holt-Winters y Prophet, los modelos con mejor ajuste a la estacionalidad histórica, proyectan una reducción gradual pero insuficiente — situándose alrededor del 15–19% al final del horizonte. La amplitud de las bandas de confianza subraya la incertidumbre: el futuro de la brecha dependerá crucialmente de decisiones de política pública que hoy aún no están tomadas.
+Los cuatro modelos coinciden en que la brecha no se cerrará espontáneamente: las proyecciones oscilan entre el **7.6%** (SARIMA) y el **24.3%** (Regresión Polinómica) para 2034. La amplitud de las bandas de confianza subraya la incertidumbre: el futuro depende de decisiones de política pública.
 :::
 :::
 
 ::: chart-card
-[PROYECCIÓN DE POBREZA LABORAL FEMENINA 2025–2034: COMPARACIÓN DE MODELOS]{.chart-title}
+[PROYECCIÓN DE POBREZA LABORAL FEMENINA 2025–2034]{.chart-title}
 
 ```{python}
 _proy_pob_muj = df_proy[df_proy['variable'] == 'pobreza_mujeres'].copy()
@@ -706,7 +806,7 @@ for modelo, grp in _proy_pob_muj.groupby('modelo'):
 
 fig_proy_pob.update_layout(
     **CHART_LAYOUT,
-    height=400,
+    height=420,
     xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M12'),
     yaxis=dict(
         title='Pobreza laboral femenina proyectada (%)',
@@ -720,9 +820,12 @@ fig_proy_pob.show(config={'displayModeBar': True, 'toImageButtonOptions': {'file
 ```
 
 ::: chart-interpretation
-En pobreza laboral femenina, la divergencia entre modelos es aún más pronunciada: Holt-Winters y Regresión Polinómica mantienen tasas elevadas (9–13%) para 2034, mientras SARIMA proyecta una convergencia hacia el 5.9%. Esta brecha entre modelos no es un error técnico, sino una señal de que el futuro está abierto a la política pública. La trayectoria optimista solo es alcanzable con intervenciones activas; sin ellas, millones de mujeres seguirán atrapadas en la pobreza laboral al final de la próxima década.
+La divergencia entre modelos señala que el futuro está abierto a la política pública. La trayectoria optimista solo es alcanzable con intervenciones activas; sin ellas, millones de mujeres seguirán atrapadas en la pobreza laboral.
 :::
 :::
+:::::
+
+<!-- TABLA: Comparativa de predicciones — ancho completo -->
 
 ::: chart-card
 [TABLA COMPARATIVA DE PREDICCIONES AL HORIZONTE 2034]{.chart-title}
@@ -801,85 +904,31 @@ La tabla revela el rango de escenarios posibles para 2034. En brecha salarial, S
 ::::::::::
 
 <!-- ============================================================
-     SECCIÓN: ACCIONES
+     LLAMADO A LA ACCIÓN — Transición de datos a propuestas
+     ============================================================ -->
+
+::: cta-block
+
+[Los datos son contundentes:]{.cta-eyebrow}
+
+## Si la tendencia actual continúa, la brecha salarial se reducirá, pero no se erradicará la pobreza laboral femenina. {.cta-headline}
+
+Las proyecciones muestran que, incluso en el escenario más optimista, **millones de mujeres seguirán trabajando sin poder escapar de la pobreza.** El crecimiento económico por sí solo no corrige una desigualdad estructural. **Debemos tomar acciones deliberadas para cerrar la brecha salarial de género** — porque esperar a que el mercado resuelva lo que el mercado ha creado no es una opción.
+
+:::
+
+
+<!-- ============================================================
+     SECCIÓN 5: ACCIONES — Propuestas de intervención
      ============================================================ -->
 
 
-
-
 :::::::::::: {#acciones .section-anchor}
-::::: {.two-col .col-5-5}
-::: {#chart-jefatura .chart-card .section-anchor}
-[POBREZA LABORAL POR JEFATURA DE HOGAR Y SEXO]{.chart-title}
-
-
-```{python}
-fig6 = go.Figure()
-fig6.add_trace(go.Scatter(
-    x=pd.concat([df_clean['fecha'], df_clean['fecha'][::-1]]),
-    y=pd.concat([df_clean['pob_jefatura_mujeres'], df_clean['pob_jefatura_hombres'][::-1]]),
-    fill='toself', fillcolor='rgba(232,81,122,0.08)',
-    line=dict(color='rgba(0,0,0,0)'), showlegend=False, hoverinfo='skip'
-))
-fig6.add_trace(go.Scatter(
-    x=df_clean['fecha'], y=df_clean['pob_jefatura_mujeres'],
-    name='Jefatura Femenina', line=dict(color=COLOR_FEMENINO, width=2.5),
-    hovertemplate='Jef. Femenina<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
-))
-fig6.add_trace(go.Scatter(
-    x=df_clean['fecha'], y=df_clean['pob_jefatura_hombres'],
-    name='Jefatura Masculina', line=dict(color=COLOR_MASCULINO, width=2.5),
-    hovertemplate='Jef. Masculina<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
-))
-fig6.add_trace(go.Scatter(
-    x=df_clean['fecha'], y=df_clean['pob_jefatura_nal'],
-    name='Nacional', line=dict(color=COLOR_AZUL, width=1.5, dash='dot'),
-    hovertemplate='Nacional<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
-))
-fig6.update_layout(
-    **CHART_LAYOUT, height=380,
-    xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
-    yaxis=dict(title='Hogares en pobreza laboral (%)', gridcolor='rgba(0,0,0,0.05)')
-)
-fig6.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'jefatura_hogar', 'format': 'png'}})
-```
-
-::: chart-interpretation
-Si una mujer es jefa de hogar, la probabilidad de que su familia esté en pobreza laboral supera ampliamente a los hogares liderados por hombres. Esto muestra una profunda debilidad estructural en el sustento de miles de familias.
-:::
+::: section-title
+¿Qué hacer? Acciones para cerrar la brecha
 :::
 
-::: chart-card
-[EVOLUCIÓN DE LA BRECHA SALARIAL (%)]{.chart-title}
-
-```{python}
-brecha_pct = df_clean['brecha_salarial'] * 100
-fig7 = go.Figure()
-fig7.add_trace(go.Scatter(
-    x=df_clean['fecha'], y=brecha_pct,
-    name='Brecha Salarial', line=dict(color=COLOR_FEMENINO, width=2.5),
-    fill='tozeroy', fillcolor='rgba(232,81,122,0.1)', mode='lines',
-    hovertemplate='Brecha: %{y:.1f}%<br>%{x|%Y-%m}<extra></extra>'
-))
-rolling = brecha_pct.rolling(window=4, min_periods=1).mean()
-fig7.add_trace(go.Scatter(
-    x=df_clean['fecha'], y=rolling,
-    name='Tendencia (12M)', line=dict(color=COLOR_AZUL, width=2, dash='dash'),
-    mode='lines', hovertemplate='Tendencia: %{y:.1f}%<br>%{x|%Y-%m}<extra></extra>'
-))
-fig7.update_layout(
-    **CHART_LAYOUT, height=380,
-    xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
-    yaxis=dict(title='Brecha salarial (%)', gridcolor='rgba(0,0,0,0.05)')
-)
-fig7.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'evolucion_brecha', 'format': 'png'}})
-```
-
-::: chart-interpretation
-La tendencia secular muestra estancamiento, la desigualdad de género económica no está disminuyendo de la manera esperada. Las medidas existentes no logran penetrar la inercia del mercado.
-:::
-:::
-:::::
+[De los datos a las decisiones: intervenciones necesarias para romper el ciclo de pobreza laboral femenina.]{.section-subtitle}
 
 ::: acciones-intro
 Los datos evidencian una realidad estructural: **la pobreza laboral en México tiene rostro de mujer**. La brecha salarial de género no es solo un indicador numérico — es el mecanismo que condena a millones de mujeres a vivir por debajo de la línea de pobreza extrema, aun cuando trabajan. Las acciones necesarias son urgentes y deben operar en múltiples niveles.
@@ -891,15 +940,15 @@ Los datos evidencian una realidad estructural: **la pobreza laboral en México t
 
 ### 1. Formalización del empleo femenino
 Solo el 0.8% de trabajadores formales están en pobreza laboral, frente al 20.1% en informalidad. Programas de formalización orientados a mujeres reducirían drásticamente la pobreza.
-[Impacto Alto]{.badge-impacto .rojo} [Corto / Mediano Plazo]{.badge-plazo}
+[Impacto Alto]{.badge-impacto }
 
 ### 2. Legislación de equidad salarial
 Implementar leyes de transparencia salarial que obliguen a las empresas a reportar brechas y corregirlas.
-[Impacto Alto]{.badge-impacto .rojo} [Mediano Plazo]{.badge-plazo}
+[Impacto Alto]{.badge-impacto }
 
 ### 3. Sistema nacional de cuidados
 La informalidad femenina está ligada a las responsabilidades de cuidado. Un sistema de cuidados liberaría a las mujeres para acceder a empleos formales.
-[Impacto Alto]{.badge-impacto .rojo} [Largo Plazo]{.badge-plazo}
+[Impacto Alto]{.badge-impacto}
 :::
 
 ::: accion-card
@@ -907,15 +956,15 @@ La informalidad femenina está ligada a las responsabilidades de cuidado. Un sis
 
 ### 4. Monitoreo trimestral
 Tableros como este deben institucionalizarse para dar seguimiento continuo a la intersección entre género y pobreza laboral.
-[Impacto Medio]{.badge-impacto .amarillo} [Corto Plazo]{.badge-plazo}
+[Impacto Medio]{.badge-impacto}
 
 ### 5. Desagregación interseccional
 Profundizar el análisis por etnicidad, región, edad y nivel educativo para identificar a las mujeres más vulnerables.
-[Impacto Medio]{.badge-impacto .amarillo} [Mediano Plazo]{.badge-plazo}
+[Impacto Medio]{.badge-impacto}
 
 ### 6. Evaluación de impacto
 Medir el efecto causal de programas existentes de empoderamiento económico femenino sobre la reducción de pobreza laboral.
-[Impacto Medio]{.badge-impacto .amarillo} [Largo Plazo]{.badge-plazo}
+[Impacto Medio]{.badge-impacto .amarillo} 
 :::
 
 ::: accion-card
@@ -923,15 +972,15 @@ Medir el efecto causal de programas existentes de empoderamiento económico feme
 
 ### 7. Certificaciones de equidad
 Promover sellos de equidad salarial en empresas, con incentivos fiscales para quienes demuestren paridad.
-[Impacto Alto]{.badge-impacto .rojo} [Mediano Plazo]{.badge-plazo}
+[Impacto Alto]{.badge-impacto }
 
 ### 8. Educación financiera con perspectiva de género
 Programas comunitarios que empoderen a las mujeres en negociación salarial.
-[Impacto Bajo]{.badge-impacto .verde} [Corto Plazo]{.badge-plazo}
+[Impacto Bajo]{.badge-impacto }
 
 ### 9. Transparencia ciudadana
 Herramientas de datos abiertos que permitan monitorear y exigir rendición de cuentas sobre equidad de género en el mercado laboral.
-[Impacto Medio]{.badge-impacto .amarillo} [Mediano Plazo]{.badge-plazo}
+[Impacto Medio]{.badge-impacto } 
 :::
 ::::::
 
