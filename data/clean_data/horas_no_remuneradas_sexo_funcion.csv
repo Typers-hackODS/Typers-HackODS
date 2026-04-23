@@ -1,0 +1,309 @@
+﻿anio,funcion,sexo,horas_semana
+2003,Total,Mujeres,42.521
+2004,Total,Mujeres,42.503
+2005,Total,Mujeres,42.745
+2006,Total,Mujeres,41.229
+2007,Total,Mujeres,40.732
+2008,Total,Mujeres,40.158
+2009,Total,Mujeres,37.289
+2010,Total,Mujeres,37.733
+2011,Total,Mujeres,38.543
+2012,Total,Mujeres,38.741
+2013,Total,Mujeres,38.91
+2014,Total,Mujeres,38.682
+2015,Total,Mujeres,39.078
+2016,Total,Mujeres,39.449
+2017,Total,Mujeres,39.626
+2018,Total,Mujeres,39.918
+2019,Total,Mujeres,39.602
+2020,Total,Mujeres,38.82
+2021,Total,Mujeres,37.788
+2022,Total,Mujeres,37.162
+2023,Total,Mujeres,36.648
+2024,Total,Mujeres,35.358
+2003,Total,Hombres,10.407
+2004,Total,Hombres,10.787
+2005,Total,Hombres,11.28
+2006,Total,Hombres,11.263
+2007,Total,Hombres,11.427
+2008,Total,Hombres,11.549
+2009,Total,Hombres,11.134
+2010,Total,Hombres,11.626
+2011,Total,Hombres,12.209
+2012,Total,Hombres,12.583
+2013,Total,Hombres,12.928
+2014,Total,Hombres,13.214
+2015,Total,Hombres,13.734
+2016,Total,Hombres,14.233
+2017,Total,Hombres,14.68
+2018,Total,Hombres,15.185
+2019,Total,Hombres,15.24
+2020,Total,Hombres,15.103
+2021,Total,Hombres,15.011
+2022,Total,Hombres,14.922
+2023,Total,Hombres,15.057
+2024,Total,Hombres,14.713
+2003,Alimentos,Mujeres,16.767
+2004,Alimentos,Mujeres,16.741
+2005,Alimentos,Mujeres,17.131
+2006,Alimentos,Mujeres,16.3
+2007,Alimentos,Mujeres,15.951
+2008,Alimentos,Mujeres,15.645
+2009,Alimentos,Mujeres,14.623
+2010,Alimentos,Mujeres,14.481
+2011,Alimentos,Mujeres,14.416
+2012,Alimentos,Mujeres,14.164
+2013,Alimentos,Mujeres,14.006
+2014,Alimentos,Mujeres,13.724
+2015,Alimentos,Mujeres,13.833
+2016,Alimentos,Mujeres,13.88
+2017,Alimentos,Mujeres,13.917
+2018,Alimentos,Mujeres,13.946
+2019,Alimentos,Mujeres,13.786
+2020,Alimentos,Mujeres,13.936
+2021,Alimentos,Mujeres,13.717
+2022,Alimentos,Mujeres,13.731
+2023,Alimentos,Mujeres,13.535
+2024,Alimentos,Mujeres,13.014
+2003,Alimentos,Hombres,4.471
+2004,Alimentos,Hombres,4.461
+2005,Alimentos,Hombres,4.573
+2006,Alimentos,Hombres,4.359
+2007,Alimentos,Hombres,4.296
+2008,Alimentos,Hombres,4.25
+2009,Alimentos,Hombres,4.08
+2010,Alimentos,Hombres,4.069
+2011,Alimentos,Hombres,4.08
+2012,Alimentos,Hombres,4.036
+2013,Alimentos,Hombres,4.019
+2014,Alimentos,Hombres,3.967
+2015,Alimentos,Hombres,4.166
+2016,Alimentos,Hombres,4.334
+2017,Alimentos,Hombres,4.487
+2018,Alimentos,Hombres,4.627
+2019,Alimentos,Hombres,4.698
+2020,Alimentos,Hombres,4.801
+2021,Alimentos,Hombres,4.774
+2022,Alimentos,Hombres,4.828
+2023,Alimentos,Hombres,4.806
+2024,Alimentos,Hombres,4.671
+2003,Limpieza vivienda,Mujeres,11.148
+2004,Limpieza vivienda,Mujeres,11.067
+2005,Limpieza vivienda,Mujeres,11.269
+2006,Limpieza vivienda,Mujeres,10.66
+2007,Limpieza vivienda,Mujeres,10.356
+2008,Limpieza vivienda,Mujeres,10.081
+2009,Limpieza vivienda,Mujeres,9.327
+2010,Limpieza vivienda,Mujeres,9.445
+2011,Limpieza vivienda,Mujeres,9.606
+2012,Limpieza vivienda,Mujeres,9.63
+2013,Limpieza vivienda,Mujeres,9.715
+2014,Limpieza vivienda,Mujeres,9.703
+2015,Limpieza vivienda,Mujeres,9.87
+2016,Limpieza vivienda,Mujeres,9.982
+2017,Limpieza vivienda,Mujeres,10.087
+2018,Limpieza vivienda,Mujeres,10.187
+2019,Limpieza vivienda,Mujeres,10.139
+2020,Limpieza vivienda,Mujeres,10.305
+2021,Limpieza vivienda,Mujeres,10.151
+2022,Limpieza vivienda,Mujeres,10.159
+2023,Limpieza vivienda,Mujeres,10.02
+2024,Limpieza vivienda,Mujeres,9.639
+2003,Limpieza vivienda,Hombres,4.166
+2004,Limpieza vivienda,Hombres,4.198
+2005,Limpieza vivienda,Hombres,4.497
+2006,Limpieza vivienda,Hombres,4.298
+2007,Limpieza vivienda,Hombres,4.149
+2008,Limpieza vivienda,Hombres,4.025
+2009,Limpieza vivienda,Hombres,3.871
+2010,Limpieza vivienda,Hombres,4.04
+2011,Limpieza vivienda,Hombres,4.223
+2012,Limpieza vivienda,Hombres,4.326
+2013,Limpieza vivienda,Hombres,4.488
+2014,Limpieza vivienda,Hombres,4.548
+2015,Limpieza vivienda,Hombres,4.74
+2016,Limpieza vivienda,Hombres,4.844
+2017,Limpieza vivienda,Hombres,4.964
+2018,Limpieza vivienda,Hombres,5.101
+2019,Limpieza vivienda,Hombres,5.098
+2020,Limpieza vivienda,Hombres,5.59
+2021,Limpieza vivienda,Hombres,5.558
+2022,Limpieza vivienda,Hombres,5.536
+2023,Limpieza vivienda,Hombres,5.498
+2024,Limpieza vivienda,Hombres,5.283
+2003,Ropa y calzado,Mujeres,7.034
+2004,Ropa y calzado,Mujeres,6.882
+2005,Ropa y calzado,Mujeres,6.901
+2006,Ropa y calzado,Mujeres,6.435
+2007,Ropa y calzado,Mujeres,6.162
+2008,Ropa y calzado,Mujeres,5.911
+2009,Ropa y calzado,Mujeres,5.362
+2010,Ropa y calzado,Mujeres,5.291
+2011,Ropa y calzado,Mujeres,5.249
+2012,Ropa y calzado,Mujeres,5.14
+2013,Ropa y calzado,Mujeres,5.067
+2014,Ropa y calzado,Mujeres,4.951
+2015,Ropa y calzado,Mujeres,4.978
+2016,Ropa y calzado,Mujeres,4.983
+2017,Ropa y calzado,Mujeres,4.985
+2018,Ropa y calzado,Mujeres,4.985
+2019,Ropa y calzado,Mujeres,4.917
+2020,Ropa y calzado,Mujeres,4.858
+2021,Ropa y calzado,Mujeres,4.675
+2022,Ropa y calzado,Mujeres,4.575
+2023,Ropa y calzado,Mujeres,4.407
+2024,Ropa y calzado,Mujeres,4.126
+2003,Ropa y calzado,Hombres,1.982
+2004,Ropa y calzado,Hombres,1.959
+2005,Ropa y calzado,Hombres,1.988
+2006,Ropa y calzado,Hombres,1.876
+2007,Ropa y calzado,Hombres,1.824
+2008,Ropa y calzado,Hombres,1.78
+2009,Ropa y calzado,Hombres,1.663
+2010,Ropa y calzado,Hombres,1.685
+2011,Ropa y calzado,Hombres,1.714
+2012,Ropa y calzado,Hombres,1.718
+2013,Ropa y calzado,Hombres,1.731
+2014,Ropa y calzado,Hombres,1.729
+2015,Ropa y calzado,Hombres,1.807
+2016,Ropa y calzado,Hombres,1.874
+2017,Ropa y calzado,Hombres,1.936
+2018,Ropa y calzado,Hombres,1.995
+2019,Ropa y calzado,Hombres,2.025
+2020,Ropa y calzado,Hombres,2.047
+2021,Ropa y calzado,Hombres,2.015
+2022,Ropa y calzado,Hombres,2.017
+2023,Ropa y calzado,Hombres,1.988
+2024,Ropa y calzado,Hombres,1.91
+2003,Compras y administración,Mujeres,4.985
+2004,Compras y administración,Mujeres,4.816
+2005,Compras y administración,Mujeres,4.768
+2006,Compras y administración,Mujeres,4.391
+2007,Compras y administración,Mujeres,4.153
+2008,Compras y administración,Mujeres,3.934
+2009,Compras y administración,Mujeres,3.518
+2010,Compras y administración,Mujeres,3.517
+2011,Compras y administración,Mujeres,3.534
+2012,Compras y administración,Mujeres,3.504
+2013,Compras y administración,Mujeres,3.496
+2014,Compras y administración,Mujeres,3.504
+2015,Compras y administración,Mujeres,3.535
+2016,Compras y administración,Mujeres,3.719
+2017,Compras y administración,Mujeres,3.855
+2018,Compras y administración,Mujeres,3.994
+2019,Compras y administración,Mujeres,3.842
+2020,Compras y administración,Mujeres,3.436
+2021,Compras y administración,Mujeres,3.346
+2022,Compras y administración,Mujeres,3.332
+2023,Compras y administración,Mujeres,3.322
+2024,Compras y administración,Mujeres,3.216
+2003,Compras y administración,Hombres,3.844
+2004,Compras y administración,Hombres,3.73
+2005,Compras y administración,Hombres,3.716
+2006,Compras y administración,Hombres,3.447
+2007,Compras y administración,Hombres,3.292
+2008,Compras y administración,Hombres,3.155
+2009,Compras y administración,Hombres,2.879
+2010,Compras y administración,Hombres,2.867
+2011,Compras y administración,Hombres,2.871
+2012,Compras y administración,Hombres,2.836
+2013,Compras y administración,Hombres,2.821
+2014,Compras y administración,Hombres,2.804
+2015,Compras y administración,Hombres,2.848
+2016,Compras y administración,Hombres,3.015
+2017,Compras y administración,Hombres,3.141
+2018,Compras y administración,Hombres,3.268
+2019,Compras y administración,Hombres,3.157
+2020,Compras y administración,Hombres,2.839
+2021,Compras y administración,Hombres,2.78
+2022,Compras y administración,Hombres,2.779
+2023,Compras y administración,Hombres,2.785
+2024,Compras y administración,Hombres,2.712
+2003,Cuidados y apoyo,Mujeres,10.714
+2004,Cuidados y apoyo,Mujeres,11.265
+2005,Cuidados y apoyo,Mujeres,10.559
+2006,Cuidados y apoyo,Mujeres,11.502
+2007,Cuidados y apoyo,Mujeres,12.412
+2008,Cuidados y apoyo,Mujeres,12.983
+2009,Cuidados y apoyo,Mujeres,12.202
+2010,Cuidados y apoyo,Mujeres,12.169
+2011,Cuidados y apoyo,Mujeres,12.511
+2012,Cuidados y apoyo,Mujeres,12.531
+2013,Cuidados y apoyo,Mujeres,12.277
+2014,Cuidados y apoyo,Mujeres,11.718
+2015,Cuidados y apoyo,Mujeres,11.887
+2016,Cuidados y apoyo,Mujeres,12.049
+2017,Cuidados y apoyo,Mujeres,11.983
+2018,Cuidados y apoyo,Mujeres,12.112
+2019,Cuidados y apoyo,Mujeres,12.311
+2020,Cuidados y apoyo,Mujeres,11.223
+2021,Cuidados y apoyo,Mujeres,10.809
+2022,Cuidados y apoyo,Mujeres,10.099
+2023,Cuidados y apoyo,Mujeres,10.253
+2024,Cuidados y apoyo,Mujeres,10.32
+2003,Cuidados y apoyo,Hombres,5.313
+2004,Cuidados y apoyo,Hombres,5.535
+2005,Cuidados y apoyo,Hombres,5.131
+2006,Cuidados y apoyo,Hombres,5.546
+2007,Cuidados y apoyo,Hombres,5.922
+2008,Cuidados y apoyo,Hombres,6.119
+2009,Cuidados y apoyo,Hombres,5.664
+2010,Cuidados y apoyo,Hombres,5.537
+2011,Cuidados y apoyo,Hombres,5.575
+2012,Cuidados y apoyo,Hombres,5.483
+2013,Cuidados y apoyo,Hombres,5.287
+2014,Cuidados y apoyo,Hombres,5.203
+2015,Cuidados y apoyo,Hombres,5.276
+2016,Cuidados y apoyo,Hombres,5.349
+2017,Cuidados y apoyo,Hombres,5.328
+2018,Cuidados y apoyo,Hombres,5.406
+2019,Cuidados y apoyo,Hombres,5.439
+2020,Cuidados y apoyo,Hombres,4.614
+2021,Cuidados y apoyo,Hombres,4.661
+2022,Cuidados y apoyo,Hombres,4.41
+2023,Cuidados y apoyo,Hombres,4.725
+2024,Cuidados y apoyo,Hombres,4.833
+2003,Ayuda a otros hogares,Mujeres,6.655
+2004,Ayuda a otros hogares,Mujeres,7.088
+2005,Ayuda a otros hogares,Mujeres,7.196
+2006,Ayuda a otros hogares,Mujeres,7.596
+2007,Ayuda a otros hogares,Mujeres,7.99
+2008,Ayuda a otros hogares,Mujeres,8.254
+2009,Ayuda a otros hogares,Mujeres,7.968
+2010,Ayuda a otros hogares,Mujeres,8.263
+2011,Ayuda a otros hogares,Mujeres,8.641
+2012,Ayuda a otros hogares,Mujeres,8.838
+2013,Ayuda a otros hogares,Mujeres,8.782
+2014,Ayuda a otros hogares,Mujeres,8.881
+2015,Ayuda a otros hogares,Mujeres,9.047
+2016,Ayuda a otros hogares,Mujeres,9.116
+2017,Ayuda a otros hogares,Mujeres,9.16
+2018,Ayuda a otros hogares,Mujeres,9.267
+2019,Ayuda a otros hogares,Mujeres,9.35
+2020,Ayuda a otros hogares,Mujeres,9.356
+2021,Ayuda a otros hogares,Mujeres,8.791
+2022,Ayuda a otros hogares,Mujeres,8.393
+2023,Ayuda a otros hogares,Mujeres,8.179
+2024,Ayuda a otros hogares,Mujeres,7.951
+2003,Ayuda a otros hogares,Hombres,6.48
+2004,Ayuda a otros hogares,Hombres,6.317
+2005,Ayuda a otros hogares,Hombres,6.042
+2006,Ayuda a otros hogares,Hombres,6.015
+2007,Ayuda a otros hogares,Hombres,5.902
+2008,Ayuda a otros hogares,Hombres,5.756
+2009,Ayuda a otros hogares,Hombres,5.369
+2010,Ayuda a otros hogares,Hombres,5.602
+2011,Ayuda a otros hogares,Hombres,5.76
+2012,Ayuda a otros hogares,Hombres,5.894
+2013,Ayuda a otros hogares,Hombres,5.738
+2014,Ayuda a otros hogares,Hombres,5.724
+2015,Ayuda a otros hogares,Hombres,5.986
+2016,Ayuda a otros hogares,Hombres,6.09
+2017,Ayuda a otros hogares,Hombres,6.312
+2018,Ayuda a otros hogares,Hombres,6.552
+2019,Ayuda a otros hogares,Hombres,6.564
+2020,Ayuda a otros hogares,Hombres,6.355
+2021,Ayuda a otros hogares,Hombres,6.033
+2022,Ayuda a otros hogares,Hombres,5.776
+2023,Ayuda a otros hogares,Hombres,5.756
+2024,Ayuda a otros hogares,Hombres,5.514
