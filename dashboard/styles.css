@@ -39,12 +39,46 @@ body {
 }
 
 /* Quarto overrides */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: 100% !important;
+  overflow-x: hidden;
+}
+
+.quarto-container,
+.page-layout-full,
+#quarto-document-content,
+#quarto-content {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.page-columns {
+  display: block !important;
+}
+
+div.page-columns,
+main.page-columns,
+.column-body,
+.column-screen,
+.column-page {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 #quarto-content,
 .page-layout-full #quarto-content, 
 #quarto-document-content, .quarto-container, div.quarto-post, .page-full {
   padding: 0 !important;
   margin: 0 !important;
   max-width: 100% !important;
+  width: 100% !important;
 }
 .quarto-title-block,
 h1.title,
@@ -77,7 +111,7 @@ body.fullcontent{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2.5rem;
+  padding: 0rem 2.5rem;
   height: 56px;
   position: sticky;
   top: 0;
@@ -125,7 +159,7 @@ body.fullcontent{
    PAGE WRAPPER
    ============================================================ */
 .page-wrapper {
-  max-width: 1100px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 1.5rem 2rem 4rem;
 }
