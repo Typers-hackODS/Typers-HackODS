@@ -546,39 +546,105 @@ La tendencia señala que cuando la brecha salarial se dispara, la incidencia de 
 <!-- TABLA: Calculadora de impacto -->
 
 ::: {#calculadora .chart-card}
-[CALCULADORA DE IMPACTO: EL COSTO DE LA BRECHA SALARIAL]{.chart-title}
+[LO QUE LA BRECHA TE IMPIDE TENER]{.chart-title}
 
-El impacto económico de la brecha salarial crece exponencialmente con el tiempo. Asumiendo la brecha histórica promedio del **25.1%** vista en los datos, aquí calculamos cuánto ingreso potencial pierde una mujer comparada con un hombre en el mismo puesto, asumiendo sueldos hipotéticos mensuales.
+Más allá de los números: la brecha salarial promedio del **25.1%** no es una cifra abstracta — es el equivalente a bienes y oportunidades concretas que las mujeres dejan de acumular a lo largo de su vida laboral. Asumiendo sueldos mensuales hipotéticos y la brecha histórica promedio, aquí mostramos qué oportunidades les arrebata el tiempo.
 
 ```{python}
-sueldos = [8000, 15000, 25000, 40000]
+sueldos     = [8000, 15000, 25000, 40000]
+sueldos_fmt = ['$8,000', '$15,000', '$25,000', '$40,000']
 brecha_decimal = pct_promedio_hist / 100
 
-calc_df = pd.DataFrame({'Sueldo Mensual Base ($)': sueldos})
-calc_df['Pérdida a 5 años ($)'] = calc_df['Sueldo Mensual Base ($)'] * brecha_decimal * 12 * 5
-calc_df['Pérdida a 10 años ($)'] = calc_df['Sueldo Mensual Base ($)'] * brecha_decimal * 12 * 10
-calc_df['Pérdida a 20 años ($)'] = calc_df['Sueldo Mensual Base ($)'] * brecha_decimal * 12 * 20
+# Precios de referencia (MXN, 2025)
+P_CONSULTA = 900      # sesión psicológica privada
+P_MAESTRIA  = 150000  # maestría en universidad privada reconocida
+P_AUTO      = 260000  # auto compacto nuevo (Nissan Versa / VW Vento)
+P_ENGANCHE  = 300000  # enganche del 20% de una vivienda media (~$1.5M)
+P_SEGURO    = 20000   # seguro de gastos médicos mayores anual
+P_IDIOMAS   = 25000   # curso completo de idiomas (básico → avanzado)
 
-for col in calc_df.columns:
-    calc_df[col] = calc_df[col].apply(lambda x: f"${x:,.0f}")
+def bienes_perdidos(perdida):
+    consultas  = int(perdida / P_CONSULTA)
+    maestrias  = perdida / P_MAESTRIA
+    autos      = perdida / P_AUTO
+    eng_prop   = perdida / P_ENGANCHE
+    seguros_yr = int(perdida / P_SEGURO)
+    idiomas_n  = int(perdida / P_IDIOMAS)
+    items = []
+
+    # Vivienda
+    if eng_prop >= 1.8:
+        items.append(f"Enganche de {int(eng_prop)} casas propias")
+    elif eng_prop >= 0.85:
+        items.append("Enganche de una casa propia")
+
+    # Transporte (solo si no hay vivienda)
+    if len(items) == 0:
+        if autos >= 1.8:
+            items.append(f"{int(autos)} autos compactos nuevos")
+        elif autos >= 0.85:
+            items.append("1 auto compacto nuevo")
+
+    # Educación
+    if maestrias >= 2.5:
+        items.append(f"{int(maestrias)} maestrías en universidad privada")
+    elif maestrias >= 0.85:
+        items.append("1 maestría completa en universidad privada")
+    elif maestrias >= 0.5 and len(items) < 2:
+        items.append("Casi una maestría completa")
+
+    # Desarrollo / salud (relleno si faltan ítems)
+    if idiomas_n >= 2 and len(items) < 2:
+        items.append(f"{idiomas_n} cursos de idiomas completos")
+    elif seguros_yr >= 3 and len(items) < 2:
+        items.append(f"Seguro médico por {seguros_yr} años")
+
+    # Bienestar mental — siempre presente como cierre
+    items.append(f"{consultas:,} consultas psicológicas privadas")
+    return items[:3]
+
+col_5, col_10, col_20 = [], [], []
+for s in sueldos:
+    p5  = s * brecha_decimal * 12 * 5
+    p10 = s * brecha_decimal * 12 * 10
+    p20 = s * brecha_decimal * 12 * 20
+    col_5.append("<br>".join(bienes_perdidos(p5)))
+    col_10.append("<br>".join(bienes_perdidos(p10)))
+    col_20.append("<br>".join(bienes_perdidos(p20)))
 
 fig_table = go.Figure(data=[go.Table(
-    header=dict(values=list(calc_df.columns),
-                fill_color=COLOR_AZUL,
-                font=dict(color='white', size=11, family='DM Sans, Arial, sans-serif'),
-                align='center'),
-    cells=dict(values=[calc_df[col] for col in calc_df.columns],
-               fill_color=[['white', 'rgba(0,0,0,0.02)']*2]*4,
-               font=dict(color='#333', size=11, family='DM Sans, Arial, sans-serif'),
-               height=30,
-               align='center'))
-])
-fig_table.update_layout(margin=dict(l=0, r=0, t=10, b=0), height=150)
+    columnwidth=[1.2, 2.5, 2.5, 2.5],
+    header=dict(
+        values=[
+            '<b>Sueldo<br>mensual</b>',
+            '<b>Lo que se deja de tener<br>en 5 años</b>',
+            '<b>Lo que se deja de tener<br>en 10 años</b>',
+            '<b>Lo que se deja de tener<br>en 20 años</b>',
+        ],
+        fill_color=[COLOR_AZUL, '#C97940', '#B5572A', '#8B3010'],
+        font=dict(color='white', size=11, family='DM Sans, Arial, sans-serif'),
+        align='center',
+        height=44,
+    ),
+    cells=dict(
+        values=[sueldos_fmt, col_5, col_10, col_20],
+        fill_color=[
+            ['rgba(240,240,248,1)', 'white'] * 2,
+            ['rgba(255,248,242,1)', 'white'] * 2,
+            ['rgba(255,237,225,1)', 'white'] * 2,
+            ['rgba(255,220,200,1)', 'white'] * 2,
+        ],
+        font=dict(color='#333', size=10, family='DM Sans, Arial, sans-serif'),
+        height=68,
+        align=['center', 'left', 'left', 'left'],
+    )
+)])
+fig_table.update_layout(margin=dict(l=0, r=0, t=10, b=0), height=350)
 fig_table.show(config={'displayModeBar': False})
 ```
 
 ::: chart-interpretation
-En un horizonte de tan solo 10 años, una mujer que percibe el equivalente a un sueldo mensual "base" de $15,000 MXN, pierde casi medio millón de pesos en total respecto a su colega hombre. Ese es el verdadero costo que frena la independencia financiera y vulnera a miles de familias.
+La brecha salarial no solo reduce un número en la nómina: le roba a cada mujer la posibilidad de estudiar, tener un auto propio, pagar su terapia o dar el enganche de una casa. A lo largo de 20 años de vida laboral, estas pérdidas acumuladas frenan el desarrollo personal y profesional femenino, impidiendo que millones de mujeres puedan vivir una vida plena e independiente.
 :::
 :::
 ::::::::::
