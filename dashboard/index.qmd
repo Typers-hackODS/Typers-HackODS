@@ -20,6 +20,7 @@ jupyter: python3
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
+import json, requests
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -51,8 +52,42 @@ df_entidad = (
 df_entidad['brecha'] = (df_entidad['Hombre'] - df_entidad['Mujer']) / df_entidad['Hombre'] * 100
 df_entidad = df_entidad.sort_values('brecha', ascending=False).reset_index(drop=True)
 
+# Normalización nombres ENOE → GeoJSON (mexicoHigh.json de angelnmara)
+_NOMBRE_GEO = {
+    'Coahuila de Zaragoza':            'Coahuila',
+    'Michoacán de Ocampo':             'Michoacán',
+    'Veracruz de Ignacio de la Llave': 'Veracruz',
+}
+df_entidad['EntidadGeo'] = df_entidad['Entidad'].replace(_NOMBRE_GEO)
+
+# GeoJSON de los 32 estados (cargado una vez para el coroplético)
+_GEO_URL = 'https://raw.githubusercontent.com/angelnmara/geojson/master/mexicoHigh.json'
+_geojson_mx = json.loads(requests.get(_GEO_URL).content.decode('utf-8-sig'))
+
 # ── Datos: proyecciones 10 años ───────────────────────────────────────────────
 df_proy = pd.read_csv('../data/clean_data/proyecciones.csv')
+
+# ── Datos: brecha generacional (causa #1 — la brecha se hereda) ──────────────
+df_gen = pd.read_csv('../data/clean_data/brecha_generacional_clean.csv', encoding='utf-8-sig')
+
+# ── Datos: trabajo no remunerado por función (causa #2 — segunda jornada) ────
+df_horas = pd.read_csv('../data/clean_data/horas_no_remuneradas_sexo_funcion.csv', encoding='utf-8-sig')
+_anio_horas = int(df_horas['anio'].max())
+_horas_total_muj = df_horas.query("anio == @_anio_horas and funcion == 'Total' and sexo == 'Mujeres'")['horas_semana'].iloc[0]
+_horas_total_hom = df_horas.query("anio == @_anio_horas and funcion == 'Total' and sexo == 'Hombres'")['horas_semana'].iloc[0]
+ratio_horas_mh = round(_horas_total_muj / _horas_total_hom, 1)
+
+# ── Datos: valor económico del trabajo no remunerado (causa #3 — el costo) ───
+df_decil = pd.read_csv('../data/clean_data/trabajo_no_remunerado_valor_decil.csv', encoding='utf-8-sig')
+_anio_decil = int(df_decil['anio'].max())
+_val_total = df_decil.query("anio == @_anio_decil and funcion == 'Total' and sexo == 'Total' and decil == 'Total'")['valor_millones'].iloc[0]
+_val_muj   = df_decil.query("anio == @_anio_decil and funcion == 'Total' and sexo == 'Mujeres' and decil == 'Total'")['valor_millones'].iloc[0]
+_val_hom   = df_decil.query("anio == @_anio_decil and funcion == 'Total' and sexo == 'Hombres' and decil == 'Total'")['valor_millones'].iloc[0]
+valor_total_billones = _val_total / 1_000_000          # millones → billones MXN
+pct_aporte_mujeres = _val_muj / _val_total * 100
+# PIB nominal MX 2024 ≈ 33.5 billones MXN (INEGI). Usamos referencia conservadora.
+_PIB_MX_BILLONES = 33.5
+pct_pib_no_remunerado = valor_total_billones / _PIB_MX_BILLONES * 100
 
 # KPIs
 brecha_promedio      = df_clean['brecha_salarial'].mean() * 100
@@ -91,7 +126,7 @@ CHART_LAYOUT = dict(
 [![](assets/logo_hackods.png){.nav-logo}![](assets/unam-logo.svg){.nav-logo-unam}](https://www.hackods.unam.mx/)
 
 ::: nav
-[Datos](#datos){.nav-link} [Brecha](#brecha){.nav-link} [Entidades](#entidades){.nav-link} [Proyecciones](#proyecciones){.nav-link} [Acciones](#acciones){.nav-link}
+[Datos](#datos){.nav-link} [Brecha](#brecha){.nav-link} [Causas](#causas){.nav-link} [Entidades](#entidades){.nav-link} [Proyecciones](#proyecciones){.nav-link} [Acciones](#acciones){.nav-link}
 :::
 :::
 
@@ -584,6 +619,257 @@ En un horizonte de tan solo 10 años, una mujer que percibe el equivalente a un 
 ::::::::::
 
 <!-- ============================================================
+     SECCIÓN 2.5: CAUSAS — El por qué estructural de la brecha
+     ============================================================ -->
+
+:::::::::: {#causas .section-anchor}
+::: section-title
+El tiempo robado: por qué la brecha no se cierra sola
+:::
+
+[La brecha salarial no es un accidente del mercado. Tres causas estructurales la sostienen — y ninguna se resolverá sin política pública específica.]{.section-subtitle}
+
+<!-- ── Causas 1 y 2 lado a lado ───────────────────────────────────────────── -->
+
+::::: {.two-col .col-5-5}
+
+::: {#chart-generacional .chart-card .section-anchor}
+[CAUSA 1 — LA BRECHA SE HEREDA POR GENERACIÓN]{.chart-title}
+
+```{python}
+_GEN_CORTO = {
+    'Gen Z (15–19)':                'Gen Z (15–19)',
+    'Gen Z / Millennials (20–29)':  'Millennials jóvenes (20–29)',
+    'Millennials (30–39)':          'Millennials (30–39)',
+    'Generación X (40–49)':         'Gen X (40–49)',
+    'Baby Boomers (50–59)':         'Boomers (50–59)',
+    'Silenciosa / BB senior (60+)': 'Senior (60+)',
+}
+_gen = df_gen.copy()
+_gen['Generacion'] = _gen['Generacion'].map(_GEN_CORTO)
+
+fig_gen = go.Figure()
+
+# Líneas-conector (la brecha visualmente)
+for r in _gen.itertuples():
+    fig_gen.add_trace(go.Scatter(
+        x=[r.ing_mujeres, r.ing_hombres],
+        y=[r.Generacion, r.Generacion],
+        mode='lines',
+        line=dict(color=COLOR_ALERTA, width=3),
+        opacity=0.55, hoverinfo='skip', showlegend=False
+    ))
+
+# Punto Mujeres (sin texto inline para evitar overflow en columna estrecha)
+fig_gen.add_trace(go.Scatter(
+    x=_gen['ing_mujeres'], y=_gen['Generacion'],
+    mode='markers',
+    marker=dict(color=COLOR_FEMENINO, size=14, line=dict(color='white', width=2)),
+    name='Mujeres',
+    hovertemplate='<b>%{y}</b><br>Mujeres: $%{x:,.0f}<extra></extra>',
+))
+fig_gen.add_trace(go.Scatter(
+    x=_gen['ing_hombres'], y=_gen['Generacion'],
+    mode='markers',
+    marker=dict(color=COLOR_MASCULINO, size=14, line=dict(color='white', width=2)),
+    name='Hombres',
+    hovertemplate='<b>%{y}</b><br>Hombres: $%{x:,.0f}<extra></extra>',
+))
+
+# Etiqueta de brecha % al centro de cada línea
+for r in _gen.itertuples():
+    fig_gen.add_annotation(
+        x=(r.ing_hombres + r.ing_mujeres) / 2, y=r.Generacion,
+        text=f"<b>{r.brecha_pct:.1f}%</b>",
+        showarrow=False,
+        font=dict(size=10, color=COLOR_ALERTA),
+        bgcolor='white',
+        bordercolor=COLOR_ALERTA, borderwidth=1, borderpad=3,
+    )
+
+fig_gen.update_layout(
+    **{k: v for k, v in CHART_LAYOUT.items() if k != 'margin'},
+    height=360,
+    margin=dict(l=140, r=30, t=30, b=50),
+    yaxis=dict(autorange='reversed', gridcolor='rgba(0,0,0,0)', tickfont=dict(size=10.5)),
+    xaxis=dict(title='Ingreso promedio mensual ($MXN)',
+               gridcolor='rgba(0,0,0,0.05)', tickformat='$,.0f',
+               range=[5000, 14500]),
+)
+fig_gen.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'brecha_generacional', 'format': 'png'}})
+```
+
+::: chart-interpretation
+La brecha **no disminuye con las nuevas generaciones, crece con la edad**: 14% en la Gen Z, 24% en quienes hoy tienen 60+. Cada década de vida laboral amplía el costo de ser mujer en México — la paridad generacional es una ilusión estadística, no una tendencia real.
+:::
+:::
+
+::: {#chart-jornada .chart-card .section-anchor}
+[CAUSA 2 — LA SEGUNDA JORNADA NO REMUNERADA]{.chart-title}
+
+```{python}
+_FUN_ORDEN = ['Cuidados y apoyo', 'Alimentos', 'Limpieza vivienda',
+              'Compras y administración', 'Ropa y calzado', 'Ayuda a otros hogares']
+_FUN_CORTO = {
+    'Cuidados y apoyo':         'Cuidados',
+    'Alimentos':                'Alimentos',
+    'Limpieza vivienda':        'Limpieza',
+    'Compras y administración': 'Compras',
+    'Ropa y calzado':           'Ropa',
+    'Ayuda a otros hogares':    'Ayuda hogares',
+}
+_pivot = (df_horas[(df_horas['anio'] == _anio_horas) & (df_horas['funcion'].isin(_FUN_ORDEN))]
+          .pivot(index='funcion', columns='sexo', values='horas_semana')
+          .reindex(_FUN_ORDEN))
+_pivot.index = [_FUN_CORTO[f] for f in _pivot.index]
+
+fig_horas = go.Figure()
+
+fig_horas.add_trace(go.Bar(
+    name='Mujeres',
+    y=_pivot.index, x=-_pivot['Mujeres'],
+    orientation='h',
+    marker=dict(color=COLOR_FEMENINO, opacity=0.88, line=dict(color='white', width=1)),
+    text=[f"{v:.1f}h" for v in _pivot['Mujeres']],
+    textposition='inside', textfont=dict(color='white', size=10),
+    hovertemplate='<b>Mujeres — %{y}</b><br>%{customdata:.1f} hrs/semana<extra></extra>',
+    customdata=_pivot['Mujeres'],
+))
+fig_horas.add_trace(go.Bar(
+    name='Hombres',
+    y=_pivot.index, x=_pivot['Hombres'],
+    orientation='h',
+    marker=dict(color=COLOR_MASCULINO, opacity=0.88, line=dict(color='white', width=1)),
+    text=[f"{v:.1f}h" for v in _pivot['Hombres']],
+    textposition='inside', textfont=dict(color='white', size=10),
+    hovertemplate='<b>Hombres — %{y}</b><br>%{x:.1f} hrs/semana<extra></extra>',
+))
+
+for fun in _pivot.index:
+    h_m, h_h = _pivot.loc[fun, 'Mujeres'], _pivot.loc[fun, 'Hombres']
+    if h_h > 0:
+        fig_horas.add_annotation(
+            x=0, y=fun,
+            text=f"<b>{h_m / h_h:.1f}×</b>",
+            showarrow=False,
+            font=dict(size=10, color=COLOR_ALERTA),
+            bgcolor='white',
+            bordercolor=COLOR_ALERTA, borderwidth=1, borderpad=3,
+            xanchor='center'
+        )
+
+_xmax = max(_pivot.max()) * 1.25
+fig_horas.update_layout(
+    **{k: v for k, v in CHART_LAYOUT.items() if k not in ('margin', 'legend')},
+    barmode='overlay',
+    height=360,
+    margin=dict(l=110, r=30, t=30, b=50),
+    legend=dict(orientation='h', y=1.08, x=0, font=dict(size=10)),
+    xaxis=dict(
+        title='Horas per cápita / semana',
+        range=[-_xmax, _xmax],
+        gridcolor='rgba(0,0,0,0.05)',
+        zeroline=True, zerolinecolor='rgba(0,0,0,0.3)', zerolinewidth=2,
+        tickvals=[-15, -10, -5, 0, 5, 10, 15],
+        ticktext=['15h', '10h', '5h', '0', '5h', '10h', '15h'],
+    ),
+    yaxis=dict(gridcolor='rgba(0,0,0,0)', tickfont=dict(size=10.5)),
+)
+fig_horas.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'horas_no_remuneradas', 'format': 'png'}})
+```
+
+::: chart-interpretation
+Una mujer dedica **{python} f"{_horas_total_muj:.1f}"** horas/semana al trabajo no remunerado del hogar; un hombre, **{python} f"{_horas_total_hom:.1f}"**. La asimetría máxima está en cuidados y alimentos (3× a 4× más). Esta jornada invisible explica por qué muchas mujeres terminan en empleos informales o de medio tiempo.
+:::
+:::
+
+:::::
+
+<!-- ── Causa 3: el costo invisible — KPIs a la izquierda, gráfica a la derecha -->
+
+::: {#chart-costo-invisible .chart-card .section-anchor}
+[CAUSA 3 — EL COSTO INVISIBLE QUE EL PIB NO CUENTA]{.chart-title}
+
+::::: {.two-col .col-4-6}
+
+::: kpi-stack
+::: kpi-card
+[VALOR ECONÓMICO TOTAL]{.kpi-label}
+
+```{python}
+Markdown(f'<div class="kpi-value">${valor_total_billones:.1f} bn</div><div class="kpi-desc">Valor anual estimado del trabajo no remunerado del hogar (billones de pesos, {_anio_decil}).</div>')
+```
+:::
+
+::: kpi-card
+[EQUIVALENTE A]{.kpi-label}
+
+```{python}
+Markdown(f'<div class="kpi-value">{pct_pib_no_remunerado:.1f}%</div><div class="kpi-desc">del PIB nacional. Si fuera un sector productivo, sería el más grande de México.</div>')
+```
+:::
+
+::: kpi-card
+[APORTE FEMENINO]{.kpi-label}
+
+```{python}
+Markdown(f'<div class="kpi-value">{pct_aporte_mujeres:.0f}%</div><div class="kpi-desc">del valor total lo generan las mujeres — trabajo que el mercado no paga ni el PIB contabiliza.</div>')
+```
+:::
+:::
+
+::: chart-inner
+```{python}
+_dec_orden = ['I','II','III','IV','V','VI','VII','VIII','IX','X']
+_dec = (df_decil[(df_decil['anio'] == _anio_decil)
+                & (df_decil['funcion'] == 'Total')
+                & (df_decil['sexo'].isin(['Mujeres','Hombres']))
+                & (df_decil['decil'].isin(_dec_orden))]
+        .pivot(index='decil', columns='sexo', values='valor_millones')
+        .reindex(_dec_orden))
+_dec_pct = _dec.div(_dec.sum(axis=1), axis=0) * 100
+
+fig_dec = go.Figure()
+fig_dec.add_trace(go.Bar(
+    name='Mujeres', x=_dec.index, y=_dec_pct['Mujeres'],
+    marker=dict(color=COLOR_FEMENINO, opacity=0.9),
+    text=[f"{v:.0f}%" for v in _dec_pct['Mujeres']],
+    textposition='inside', textfont=dict(color='white', size=11),
+    hovertemplate='<b>Decil %{x}</b><br>Mujeres: %{customdata:,.0f} millones MXN<br>(%{y:.1f}% del decil)<extra></extra>',
+    customdata=_dec['Mujeres'],
+))
+fig_dec.add_trace(go.Bar(
+    name='Hombres', x=_dec.index, y=_dec_pct['Hombres'],
+    marker=dict(color=COLOR_MASCULINO, opacity=0.9),
+    text=[f"{v:.0f}%" for v in _dec_pct['Hombres']],
+    textposition='inside', textfont=dict(color='white', size=11),
+    hovertemplate='<b>Decil %{x}</b><br>Hombres: %{customdata:,.0f} millones MXN<br>(%{y:.1f}% del decil)<extra></extra>',
+    customdata=_dec['Hombres'],
+))
+
+fig_dec.update_layout(
+    **{k: v for k, v in CHART_LAYOUT.items() if k != 'margin'},
+    barmode='stack',
+    height=420,
+    margin=dict(l=60, r=20, t=30, b=60),
+    xaxis=dict(title='Decil de hogar (I = más pobre · X = más rico)',
+               gridcolor='rgba(0,0,0,0)', tickfont=dict(size=11)),
+    yaxis=dict(title='% del valor del trabajo no remunerado del decil',
+               gridcolor='rgba(0,0,0,0.05)', range=[0, 100], ticksuffix='%'),
+)
+fig_dec.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'valor_trabajo_no_remunerado_decil', 'format': 'png'}})
+```
+:::
+
+:::::
+
+::: chart-interpretation
+La cuenta satélite del INEGI dimensiona lo invisible: el trabajo no remunerado del hogar vale **${python} f"{valor_total_billones:.1f}"** billones de pesos al año (~{python} f"{pct_pib_no_remunerado:.0f}"% del PIB), y las mujeres aportan ~{python} f"{pct_aporte_mujeres:.0f}"% de ese valor **en todos los deciles de ingreso**. La proporción femenina es prácticamente constante del decil más pobre al más rico: ningún nivel socioeconómico libera a las mujeres de esta carga. Es el subsidio silencioso que sostiene la economía mexicana sin aparecer en el PIB.
+2:::
+:::
+::::::::::
+
+<!-- ============================================================
      SECCIÓN 3: ENTIDADES — Dimensión geográfica
      ============================================================ -->
 
@@ -599,61 +885,102 @@ En un horizonte de tan solo 10 años, una mujer que percibe el equivalente a un 
 [DISPARIDAD SALARIAL ENTRE HOMBRES Y MUJERES POR ENTIDAD FEDERATIVA (Q4 2025)]{.chart-title}
 
 ```{python}
-fig_ent = go.Figure()
+_top3 = df_entidad.nlargest(3, 'brecha')
+_bot3 = df_entidad.nsmallest(3, 'brecha')
 
-fig_ent.add_trace(go.Bar(
-    y=df_entidad['Entidad'],
-    x=df_entidad['Mujer'],
-    name='Mujeres',
-    orientation='h',
-    marker=dict(color=COLOR_FEMENINO, opacity=0.85),
-    hovertemplate='<b>%{y}</b><br>Ingreso Mujeres: $%{x:,.0f}<extra></extra>'
-))
+import plotly.express as px
+import pandas as pd
+import json
+import requests
 
-fig_ent.add_trace(go.Bar(
-    y=df_entidad['Entidad'],
-    x=df_entidad['Hombre'] - df_entidad['Mujer'],
-    name='Brecha (diferencia)',
-    orientation='h',
-    base=df_entidad['Mujer'],
-    marker=dict(
-        color=df_entidad['brecha'],
-        colorscale=[[0, 'rgba(217,92,58,0.25)'], [1, 'rgba(217,92,58,0.85)']],
-        showscale=True,
-        colorbar=dict(
-            title=dict(text='Brecha (%)', font=dict(size=10)),
-            thickness=10, len=0.6,
-            tickformat='.0f',
-            ticksuffix='%'
-        )
-    ),
-    hovertemplate='<b>%{y}</b><br>Brecha: %{marker.color:.1f}%<extra></extra>'
-))
+# 1. Cargar el GeoJSON (Verificado)
+url = "https://raw.githubusercontent.com/angelnmara/geojson/master/mexicoHigh.json"
+response = requests.get(url)
+geojson_data = json.loads(response.content.decode('utf-8-sig'))
 
-_chart_ent = {k: v for k, v in CHART_LAYOUT.items() if k not in ('margin', 'legend')}
-fig_ent.update_layout(
-    **_chart_ent,
-    barmode='stack',
-    height=780,
-    margin=dict(l=160, r=80, t=30, b=50),
-    legend=dict(orientation='h', y=1.02, x=0, font=dict(size=10)),
-    xaxis=dict(
-        title='Ingreso promedio mensual ponderado ($MXN)',
-        gridcolor='rgba(0,0,0,0.05)',
-        tickformat='$,.0f'
-    ),
-    yaxis=dict(
-        autorange='reversed',
-        gridcolor='rgba(0,0,0,0)',
-        tickfont=dict(size=10)
-    ),
+# 2. DataFrame Corregido (32 estados = 32 valores)
+# He corregido los '15,2' por '15.2' para que Python los lea como un solo número
+df_mapa = pd.DataFrame({
+    'Estado': [
+        'Zacatecas', 'Yucatán', 'Veracruz', 'Tlaxcala', 'Tamaulipas',
+        'Tabasco', 'Sonora', 'Sinaloa', 'San Luis Potosí', 'Quintana Roo',
+        'Querétaro', 'Puebla', 'Oaxaca', 'Nuevo León', 'Nayarit',
+        'Morelos', 'Michoacán', 'México', 'Jalisco', 'Hidalgo',
+        'Guerrero', 'Guanajuato', 'Durango', 'Ciudad de México',
+        'Colima', 'Coahuila', 'Chihuahua', 'Chiapas',
+        'Campeche', 'Baja California Sur', 'Baja California', 'Aguascalientes'
+    ],
+    'Brecha': [
+        16.1, 21.5, 20.8, 24.2, 18.5, 
+        21.0, 22.4, 21.0, 15.2, 17.9, 
+        22.8, 19.7, 24.5, 20.5, 20.8, 
+        20.2, 22.3, 13.6, 24.5, 28.2, 
+        25.1, 21.5, 20.3, 15.6, 25.8, 
+        16.2, 19.2, 19.2, 10.2, 21.9, 
+        20.8, 17.4
+    ]
+})
+
+# 3. Crear el Mapa
+fig = px.choropleth(
+    df_mapa,
+    geojson=geojson_data,
+    locations='Estado',
+    featureidkey="properties.name",
+    color='Brecha',
+    color_continuous_scale="Purples",
+    range_color=[10, 30],
+    hover_name='Estado',
+    hover_data={'Estado': False, 'Brecha': ':.1f%'},
+    labels={'Brecha': 'Brecha Salarial (%)'},
 )
 
-fig_ent.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'brecha_entidad', 'format': 'png'}})
+# 4. Ajustes de visualización
+fig.update_geos(fitbounds="locations", visible=False)
+fig.update_layout(
+    margin={"r":0,"t":50,"l":0,"b":0},
+    paper_bgcolor='white'
+)
+
+# Agregar nota al pie dentro del gráfico
+fig.add_annotation(
+    text="Fuente: INEGI (ENOE), tabulados interactivos. | Calculo propio",
+    xref="paper", yref="paper",
+    x=0, y=-0.15, # Posición en la esquina inferior izquierda
+    showarrow=False,
+    font=dict(size=10, color="gray"),
+    align="left"
+)
+
+# Ajustar el margen inferior para que quepa la nota
+fig.update_layout(margin={"r":0,"t":50,"l":0,"b":60})
+
+fig.show()
 ```
 
+::::: {.two-col .col-5-5 style="margin-top: 1rem;"}
 ::: chart-interpretation
-Hidalgo, Colima y Guerrero encabezan la disparidad con brechas superiores al 25%, mientras que Chiapas y Estado de México presentan las menores diferencias — aunque siguen siendo significativas. No se trata de coincidencia: las entidades con mayor informalidad y economías rurales concentran las brechas más pronunciadas, ya que las mujeres quedan confinadas a los rangos salariales más bajos. Ciudad de México, a pesar de ser el polo económico del país, aún registra una brecha del 15.6%, evidenciando que la desigualdad persiste incluso en mercados laborales más desarrollados.
+**Las 3 entidades con mayor brecha**
+
+```{python}
+from IPython.display import Markdown
+_filas_top = '\n'.join([f"- **{r.Entidad}** — {r.brecha:.1f}%" for r in _top3.itertuples()])
+Markdown(_filas_top)
+```
+:::
+
+::: chart-interpretation
+**Las 3 entidades con menor brecha**
+
+```{python}
+_filas_bot = '\n'.join([f"- **{r.Entidad}** — {r.brecha:.1f}%" for r in _bot3.itertuples()])
+Markdown(_filas_bot)
+```
+:::
+:::::
+
+::: chart-interpretation
+La intensidad del color expone una geografía clara de la desigualdad: las entidades con mayor informalidad y economías rurales concentran las brechas más pronunciadas, donde las mujeres quedan confinadas a los rangos salariales más bajos. Ciudad de México, a pesar de ser el polo económico del país, aún registra una brecha relevante — evidencia de que la desigualdad persiste incluso en los mercados laborales más desarrollados.
 :::
 :::
 ::::::::::
