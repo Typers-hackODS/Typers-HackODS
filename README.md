@@ -39,14 +39,90 @@ Este tablero proporciona herramientas para la visualización y el conocimiento p
 
 ### Diccionario de Datos y Metadatos
 
-| Dataset / Archivo | Fuente | Fecha de Descarga | Licencia de Origen | Descripción de Variables Clave |
-| :--- | :--- | :--- | :--- | :--- |
-| **ITLP - Porcentaje de pobreza laboral nacional** | CONEVAL ([Lineas de pobreza por ingresos](https://www.coneval.org.mx/Medicion/MP/Paginas/Lineas-de-Pobreza-por-Ingresos.aspx), [Cuadros de ITLP e indicadores](https://www.coneval.org.mx/Medicion/Paginas/ITLP-IS_pobreza_laboral.aspx)) | 6 de abril de 2026 | Libre Uso Gubernamental | `Trimestre`: Periodo de evaluación.<br>`Porcentaje`: Proporción de la población con ingreso laboral inferior a la LPEI. |
-| **ENOE - Población ocupada por nivel de ingresos** | INEGI ([Tabulados básicos y de indicadores de género](https://www.inegi.org.mx/programas/enoe/15ymas/)) | 6 de abril de 2026 | Uso Libre INEGI | `Sexo`: Hombre / Mujer.<br>`Nivel_Ingresos`: Agrupación en Salarios Mínimos.<br>`Condicion_Formalidad`: Empleo formal / informal. |
+| Fuente | Indicador | Cobertura | Periodicidad |
+|:------|:---------|:----------|:-------------|
+| **INEGI · [ENOE](https://www.inegi.org.mx/programas/enoe/15ymas/)** | Ingreso laboral por sexo, rango salarial, entidad | 2005 Q1 – 2025 Q4 | Trimestral |
+| **CONEVAL · [ITLP](https://www.coneval.org.mx/Medicion/Paginas/ITLP-IS_pobreza_laboral.aspx)** | Pobreza laboral, formal/informal, jefatura de hogar | 2005 Q1 – 2024 Q4 | Trimestral |
+| **INEGI · Cuenta Satélite TNRH** | Valor económico del trabajo no remunerado por decil y función | 2019–2023 | Anual |
+| **INEGI · ENUT 2019** | Horas de trabajo no remunerado por sexo y actividad | 2019 | — |
+ 
+Todos los datos son oficiales, públicos y están descargados en `data/`. Los scripts de limpieza y el notebook de consolidación están versionados en `scripts/`. El dataset final que alimenta el tablero es `data/dataset_final_tablero.csv`.
 
 ---
 
 ## 4. Estructura del repositorio
-* `datos/`: Contiene los archivos crudos (.csv / .xlsx) extraídos de CONEVAL e INEGI.
-* `scripts/`: Código en Python empleado para la limpieza, cruce y estandarización de las bases de datos.
-* `dashboard/`: Archivo fuente `.qmd` que contiene el prototipo del tablero, la estructura narrativa en Markdown y la generación de las visualizaciones interactivas.
+```
+Typers-HackODS/
+├── README.md                         ← Este archivo
+├── LICENSE                           ← Creative Commons BY-SA 4.0
+├── pyproject.toml                    ← Dependencias (reemplaza requirements.txt)
+├── uv.lock                           ← Versiones exactas — reproducibilidad 100%
+├── .python-version                   ← Fija Python 3.14
+│
+├── dashboard/                        ← Tablero Quarto
+│   ├── index.qmd                     ← Código fuente del dashboard 
+│   ├── _quarto.yml                   ← Configura salida en ../docs 
+│   ├── styles.css                    ← Sistema de diseño (variables, tipografía, grid)
+│   ├── GUIA_INSTALACION.md           ← Guía detallada paso a paso
+│   └── assets/
+│       ├── logo_hackods.png
+│       └── unam-logo.svg
+│
+├── docs/                             ← Salida del render (generada automáticamente)
+│   └── index.html                    ← Tablero autocontenido listo para publicar
+│
+├── data/
+│   ├── dataset_final_tablero.csv     ← Dataset consolidado que alimenta el tablero
+│   ├── *.csv / *.xlsx / *.ods        ← Datos crudos de CONEVAL e INEGI
+│   └── clean_data/                   ← Datos intermedios limpios por indicador
+│       ├── enoe_salarios_sexo_entidad.csv
+│       ├── brecha_generacional_clean.csv
+│       ├── horas_no_remuneradas_sexo_funcion.csv
+│       ├── trabajo_no_remunerado_valor_decil.csv
+│       └── proyecciones.csv
+│
+└── scripts/
+    ├── limpieza_*.ipynb              ← Un notebook por fuente
+    └── consolidacion_datos.ipynb     ← Une todos los datasets
+```
+---
+## 5. Reproducción del tablero
+ 
+> La guía detallada está en [`dashboard/GUIA_INSTALACION.md`](dashboard/GUIA_INSTALACION.md).
+ 
+### Requisitos
+ 
+| Herramienta | Instalación |
+|:------------|:------------|
+| **Git** | [git-scm.com](https://git-scm.com/downloads) |
+| **uv** (Astral) | [astral.sh/uv](https://docs.astral.sh/uv/getting-started/installation/) |
+ 
+> `uv` instala Python 3.14 y `quarto-cli` automáticamente — no necesitas instalarlos por separado.
+ 
+### Pasos
+ 
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/hackods/Typers-HackODS.git
+cd Typers-HackODS
+ 
+# 2. Sincronizar el entorno (instala Python + dependencias + Quarto)
+uv sync
+ 
+# 3. Renderizar el tablero
+uv run quarto render dashboard/index.qmd
+```
+ 
+### Referencia rápida de comandos
+ 
+| Acción | Comando |
+|:-------|:--------|
+| Instalar dependencias | `uv sync` |
+| Correr notebook python | `uv run jupyter execute scripts/archivo.ipynb` |
+| Generar HTML final | `uv run quarto render dashboard/index.qmd` |
+ 
+---
+## 6. Licencia
+ 
+Este trabajo está licenciado bajo **[Creative Commons Atribución-CompartirIgual 4.0 Internacional (CC BY-SA 4.0)](LICENSE)**.
+---
