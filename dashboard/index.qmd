@@ -1,6 +1,7 @@
 ---
 title: "Trabajar no es suficiente: El género define quién cae en la pobreza"
 subtitle: "Análisis de la brecha salarial y su impacto en la pobreza laboral femenina en México."
+# dashboard: scrolling
 format:
   html:
     theme: cosmo
@@ -8,6 +9,7 @@ format:
     toc: false
     embed-resources: true
     page-layout: full
+    body-classes: "quarto-dashboard fullcontent"
 execute:
   echo: false
   warning: false
@@ -53,10 +55,17 @@ df_entidad['brecha'] = (df_entidad['Hombre'] - df_entidad['Mujer']) / df_entidad
 df_entidad = df_entidad.sort_values('brecha', ascending=False).reset_index(drop=True)
 
 # Normalización nombres ENOE → GeoJSON (mexicoHigh.json de angelnmara)
+# El CSV tiene caracteres UTF-8 leídos como latin-1, produciendo secuencias ï¿½ (U+FFFD en UTF-8)
 _NOMBRE_GEO = {
     'Coahuila de Zaragoza':            'Coahuila',
-    'Michoacán de Ocampo':             'Michoacán',
     'Veracruz de Ignacio de la Llave': 'Veracruz',
+    'Michoacï¿½n de Ocampo':           'Michoacán',
+    'Ciudad de Mï¿½xico':              'Ciudad de México',
+    'Mï¿½xico':                        'México',
+    'Nuevo Leï¿½n':                    'Nuevo León',
+    'Querï¿½taro':                     'Querétaro',
+    'San Luis Potosï¿½':               'San Luis Potosí',
+    'Yucatï¿½n':                       'Yucatán',
 }
 df_entidad['EntidadGeo'] = df_entidad['Entidad'].replace(_NOMBRE_GEO)
 
@@ -113,6 +122,16 @@ CHART_LAYOUT = dict(
     margin=dict(l=50, r=20, t=30, b=50),
     legend=dict(orientation='h', y=1.08, x=0, font=dict(size=10)),
 )
+
+def _fuente(fig, texto):
+    fig.add_annotation(
+        text=f"Fuente: {texto}",
+        xref="paper", yref="paper",
+        x=0, y=-0.13,
+        showarrow=False,
+        font=dict(size=9, color="rgba(0,0,0,0.38)"),
+        align="left", xanchor="left",
+    )
 ```
 
 
@@ -126,7 +145,7 @@ CHART_LAYOUT = dict(
 [![](assets/logo_hackods.png){.nav-logo}![](assets/unam-logo.svg){.nav-logo-unam}](https://www.hackods.unam.mx/)
 
 ::: nav
-[Datos](#datos){.nav-link} [Brecha](#brecha){.nav-link} [Causas](#causas){.nav-link} [Entidades](#entidades){.nav-link} [Proyecciones](#proyecciones){.nav-link} [Acciones](#acciones){.nav-link}
+[¿Qué pasa?](#datos){.nav-link} [¿Por qué pasa?](#causas){.nav-link} [Proyecciones](#proyecciones){.nav-link} [Acciones](#acciones){.nav-link}
 :::
 :::
 
@@ -139,7 +158,7 @@ CHART_LAYOUT = dict(
 :::::::::::::::::::::::::::::::::::::::: page-wrapper
 
 <!-- ============================================================
-     SECCIÓN 1: DATOS — Contexto y panorama general
+     SECCIÓN 1: ¿QUÉ PASA? — Contexto y panorama general
      ============================================================ -->
 
 
@@ -154,7 +173,7 @@ CHART_LAYOUT = dict(
 
 ## Trabajar no es suficiente: El género define quién cae en la pobreza {.section-title style="font-family:'Helvetica',serif;font-size:2.4rem;line-height:1.15;color:var(--morado-header);font-weight:900;margin:0 0 1rem;"}
 
-**En México, el empleo no garantiza una vida digna para todos.** Mientras persista la brecha salarial, las mujeres seguirán siendo las más vulnerables a la _pobreza laboral_. Este análisis explora cómo la discriminación de ingresos actúa como trampa económica que impide alcanzar el fin de la pobreza sin antes lograr una verdadera igualdad de género.
+**En México, el empleo no garantiza una vida digna.** Para millones de mujeres, el mercado laboral opera como una trampa: el esfuerzo no se traduce en las mismas *oportunidades*. Este análisis revela que la _pobreza laboral_ no es un fallo aislado, si no un resultado estructural. Se sostiene sobre un subsidio invisible de cuidados y una brecha salarial que, lejos de desaparecer, se acumula y profundiza con el tiempo.
 
 
 ::::
@@ -213,7 +232,7 @@ Markdown(f'<div class="kpi-value">{ratio_informalidad}:1</div><div class="kpi-de
 :::
 :::::::
 
-<!-- GRÁFICA PRINCIPAL + MINIATURAS -->
+<!-- CHART 1: Pobreza laboral por sexo + thumbs panel -->
 
 ::: section-title
 ¿La pobreza viene de la brecha salarial?
@@ -221,7 +240,7 @@ Markdown(f'<div class="kpi-value">{ratio_informalidad}:1</div><div class="kpi-de
 
 [Comparando las tasas de pobreza laboral entre hombres y mujeres: la diferencia revela una desigualdad persistente.]{.section-subtitle}
 
-::::::::: {.two-col .col-6-4}
+::::: {.two-col .col-6-4}
 ::: {#chart-pob-sexo .chart-card .section-anchor}
 [POBREZA LABORAL POR SEXO (PROMEDIO ANUAL)]{.chart-title}
 
@@ -253,7 +272,8 @@ fig2.update_layout(
     xaxis=dict(title='Año', gridcolor='rgba(0,0,0,0.05)'),
     yaxis=dict(title='Pobreza laboral (%)', gridcolor='rgba(0,0,0,0.05)')
 )
-fig2.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'pobreza_sexo', 'format': 'png'}})
+_fuente(fig2, "CONEVAL (ITLP)")
+fig2.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename': 'pobreza_sexo', 'format': 'png'}})
 ```
 
 ::: chart-interpretation
@@ -261,35 +281,40 @@ Consistentemente, un mayor porcentaje de mujeres ocupadas vive en pobreza labora
 :::
 :::
 
-::::::: thumbs-panel
-[[↓ Ingreso promedio]{.thumb-label}  <br>  [Comparación del ingreso mensual entre hombres y mujeres a lo largo de dos décadas.]{.thumb-desc}](#chart-ingreso){.thumb-card .active}
+::: thumbs-panel
+::: {.thumb-card .thumb-primary}
+[¿POR QUÉ PASA?]{.thumb-label}
 
-[[↓ Ratio salarial]{.thumb-label}  <br>  [Proporción histórica del ingreso femenino respecto al masculino.]{.thumb-desc}](#chart-ratio){.thumb-card}
+[La brecha salarial no es accidental: tres causas estructurales la sostienen — y ninguna se resolverá sin política pública específica.]{.thumb-desc}
 
-[[↓ Jefatura de hogar]{.thumb-label}  <br>  [Pobreza laboral analizada por sexo del jefe o jefa de familia.]{.thumb-desc}](#chart-jefatura){.thumb-card}
+[Ver causas →](#causas)
+:::
 
-[[↓ Evolución de la brecha]{.thumb-label}  <br>  [Cómo ha cambiado el porcentaje de la brecha salarial a lo largo del tiempo.]{.thumb-desc}](#chart-brecha-evol){.thumb-card}
+::: thumb-card
+[¿HASTA CUÁNDO?]{.thumb-label}
 
-[[↓ Formal vs Informal]{.thumb-label}  <br>  [Cómo el tipo de empleo amplifica la vulnerabilidad económica.]{.thumb-desc}](#chart-informal){.thumb-card}
+[Cuatro modelos estadísticos coinciden: la brecha no se cerrará por inercia del mercado en la próxima década.]{.thumb-desc}
 
-[[↓ ¿Dónde es más profunda la brecha?]{.thumb-label}  <br>  [Análisis de la brecha salarial por entidad federativa.]{.thumb-desc}](#entidades){.thumb-card}
-:::::::
-:::::::::
+[Ver proyecciones →](#proyecciones)
+:::
 
-:::::::::::::::::::::
+::: thumb-card
+[¿QUÉ HACER?]{.thumb-label}
 
-<!-- ============================================================
-     SECCIÓN 2: BRECHA — Midiendo la desigualdad salarial
-     ============================================================ -->
+[El marco legal para cerrar la brecha ya existe. Lo que falta son consecuencias reales cuando no se cumple.]{.thumb-desc}
 
-:::::::::: {#brecha .section-anchor}
+[Ver acciones →](#acciones)
+:::
+:::
+:::::
+
+<!-- CHARTS 2 y 3: Ingreso promedio + Ratio salarial -->
+
 ::: section-title
 Por cada salario de un hombre, ¿cuánto gana una mujer?
 :::
 
 [Visualizando la disparidad. Históricamente, las mujeres en México perciben menos del 80% del salario masculino.]{.section-subtitle}
-
-<!-- FILA 1: Ingreso promedio mensual + Ratio salarial -->
 
 ::::: {.two-col .col-5-5}
 ::: {#chart-ingreso .chart-card .section-anchor}
@@ -354,7 +379,8 @@ fig.add_annotation(x='2019-05-01', y=8000, text="Reformas Paridad", showarrow=Fa
 fig.add_vline(x='2020-03-01', line_width=1, line_dash="dash", line_color="gray")
 fig.add_annotation(x='2020-03-01', y=7500, text="COVID-19", showarrow=False, font=dict(size=10, color="gray"), xanchor="left")
 
-fig.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'ingreso_promedio', 'format': 'png'}})
+_fuente(fig, "INEGI (ENOE)")
+fig.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename': 'ingreso_promedio', 'format': 'png'}})
 ```
 
 ::: chart-interpretation
@@ -385,7 +411,8 @@ fig3.update_layout(
     xaxis=dict(title='Año', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
     yaxis=dict(title='Porcentaje (%)', gridcolor='rgba(0,0,0,0.05)', range=[50, 110])
 )
-fig3.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'ratio_salarial', 'format': 'png'}})
+_fuente(fig3, "INEGI (ENOE)")
+fig3.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename': 'ratio_salarial', 'format': 'png'}})
 ```
 
 ::: chart-interpretation
@@ -394,232 +421,66 @@ La paridad del 100% parece inalcanzable; las mujeres han ganado siempre menos de
 :::
 :::::
 
-<!-- FILA 2: Jefatura de hogar + Evolución de la brecha -->
+<!-- CHART 4: Mapa por entidad federativa -->
 
 ::: section-title
-La pobreza tiene rostro de mujer
+¿Dónde es más profunda la brecha? La desigualdad también tiene geografía
 :::
 
-[Cuando la brecha se traduce en hambre: la pobreza laboral afecta desproporcionadamente a los hogares liderados por mujeres y la brecha no cede.]{.section-subtitle}
-
-::::: {.two-col .col-5-5}
-::: {#chart-jefatura .chart-card .section-anchor}
-[POBREZA LABORAL POR JEFATURA DE HOGAR Y SEXO]{.chart-title}
-
-```{python}
-fig6 = go.Figure()
-fig6.add_trace(go.Scatter(
-    x=pd.concat([df_clean['fecha'], df_clean['fecha'][::-1]]),
-    y=pd.concat([df_clean['pob_jefatura_mujeres'], df_clean['pob_jefatura_hombres'][::-1]]),
-    fill='toself', fillcolor='rgba(123, 47, 190, 0.08)',
-    line=dict(color='rgba(0,0,0,0)'), showlegend=False, hoverinfo='skip'
-))
-fig6.add_trace(go.Scatter(
-    x=df_clean['fecha'], y=df_clean['pob_jefatura_mujeres'],
-    name='Jefatura Femenina', line=dict(color=COLOR_FEMENINO, width=2.5),
-    hovertemplate='Jef. Femenina<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
-))
-fig6.add_trace(go.Scatter(
-    x=df_clean['fecha'], y=df_clean['pob_jefatura_hombres'],
-    name='Jefatura Masculina', line=dict(color=COLOR_MASCULINO, width=2.5),
-    hovertemplate='Jef. Masculina<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
-))
-fig6.add_trace(go.Scatter(
-    x=df_clean['fecha'], y=df_clean['pob_jefatura_nal'],
-    name='Nacional', line=dict(color=COLOR_AZUL, width=1.5, dash='dot'),
-    hovertemplate='Nacional<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
-))
-fig6.update_layout(
-    **CHART_LAYOUT, height=380,
-    xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
-    yaxis=dict(title='Hogares en pobreza laboral (%)', gridcolor='rgba(0,0,0,0.05)')
-)
-fig6.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'jefatura_hogar', 'format': 'png'}})
-```
-
-::: chart-interpretation
-Si una mujer es jefa de hogar, la probabilidad de que su familia esté en pobreza laboral supera ampliamente a los hogares liderados por hombres. Esto muestra una profunda debilidad estructural en el sustento de miles de familias.
-:::
-:::
-
-::: {#chart-brecha-evol .chart-card .section-anchor}
-[EVOLUCIÓN DE LA BRECHA SALARIAL (%)]{.chart-title}
-
-```{python}
-brecha_pct = df_clean['brecha_salarial'] * 100
-fig7 = go.Figure()
-fig7.add_trace(go.Scatter(
-    x=df_clean['fecha'], y=brecha_pct,
-    name='Brecha Salarial', line=dict(color=COLOR_ALERTA, width=2.5),
-    fill='tozeroy', fillcolor='rgba(217, 92, 58, 0.10)', mode='lines',
-    hovertemplate='Brecha: %{y:.1f}%<br>%{x|%Y-%m}<extra></extra>'
-))
-rolling = brecha_pct.rolling(window=4, min_periods=1).mean()
-fig7.add_trace(go.Scatter(
-    x=df_clean['fecha'], y=rolling,
-    name='Tendencia (12M)', line=dict(color=COLOR_AZUL, width=2, dash='dash'),
-    mode='lines', hovertemplate='Tendencia: %{y:.1f}%<br>%{x|%Y-%m}<extra></extra>'
-))
-fig7.update_layout(
-    **CHART_LAYOUT, height=380,
-    xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
-    yaxis=dict(title='Brecha salarial (%)', gridcolor='rgba(0,0,0,0.05)')
-)
-fig7.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'evolucion_brecha', 'format': 'png'}})
-```
-
-::: chart-interpretation
-La tendencia secular muestra estancamiento, la desigualdad de género económica no está disminuyendo de la manera esperada. Las medidas existentes no logran penetrar la inercia del mercado.
-:::
-:::
-:::::
-
-<!-- FILA 3: Formal vs Informal + Correlación -->
-
-::: section-title
-Los mecanismos de la trampa: informalidad y correlación
-:::
-
-[La informalidad laboral y la brecha salarial no son problemas aislados — se retroalimentan para mantener a las mujeres en la pobreza.]{.section-subtitle}
-
-::::: {.two-col .col-5-5}
-::: {#chart-informal .chart-card .section-anchor}
-[POBREZA LABORAL: FORMAL VS INFORMAL]{.chart-title}
-
-```{python}
-fig4 = go.Figure()
-fig4.add_trace(go.Scatter(
-    x=df_clean['fecha'], y=df_clean['pobreza_informal'],
-    name='Sector Informal', line=dict(color=COLOR_ALERTA, width=2.5), mode='lines',
-    hovertemplate='Informal<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
-))
-fig4.add_trace(go.Scatter(
-    x=df_clean['fecha'], y=df_clean['pobreza_formal'],
-    name='Sector Formal', line=dict(color=COLOR_AZUL, width=2.5), mode='lines',
-    hovertemplate='Formal<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
-))
-fig4.update_layout(
-    **CHART_LAYOUT, height=380,
-    xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
-    yaxis=dict(title='Pobreza laboral (%)', gridcolor='rgba(0,0,0,0.05)')
-)
-fig4.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'formal_vs_informal', 'format': 'png'}})
-```
-
-::: chart-interpretation
-La precariedad formal es casi inexistente en comparación con la informal. Esto penaliza severamente a las mujeres, obligadas a tomar empleos informales por las cargas de cuidado en sus hogares, cayendo de forma automática en la pobreza laboral.
-:::
-:::
+[El ingreso promedio ponderado por rango salarial revela que la brecha no es homogénea: entidades con mayor informalidad concentran las disparidades más amplias.]{.section-subtitle}
 
 ::: chart-card
-[CORRELACIÓN: BRECHA SALARIAL VS POBREZA LABORAL FEMENINA]{.chart-title}
+[DISPARIDAD SALARIAL ENTRE HOMBRES Y MUJERES POR ENTIDAD FEDERATIVA (Q4 2025)]{.chart-title}
 
 ```{python}
-fig5 = go.Figure()
-fig5.add_trace(go.Scatter(
-    x=df_clean['brecha_salarial'] * 100, y=df_clean['pobreza_mujeres'],
-    mode='markers',
-    marker=dict(
-        color=df_clean['fecha'].dt.year,
-        colorscale=[[0, COLOR_MASCULINO], [1, COLOR_FEMENINO]],
-        size=8, opacity=0.75,
-        colorbar=dict(title='Año', thickness=12, len=0.6),
-        line=dict(width=0.5, color='white')
-    ),
-    hovertemplate='Brecha: %{x:.1f}%<br>Pobreza fem.: %{y:.1f}%<extra></extra>',
-    name='Trimestral'
-))
-z = np.polyfit(df_clean['brecha_salarial'] * 100, df_clean['pobreza_mujeres'], 1)
-p = np.poly1d(z)
-x_line = np.linspace(df_clean['brecha_salarial'].min()*100, df_clean['brecha_salarial'].max()*100, 50)
+import plotly.express as px
 
-corr = np.corrcoef(df_clean['brecha_salarial'] * 100, df_clean['pobreza_mujeres'])[0, 1]
-r2 = corr ** 2
+_df_mapa = df_entidad[['Entidad', 'EntidadGeo', 'brecha']].copy()
+_df_mapa['brecha_fmt'] = _df_mapa['brecha'].round(1)
 
-std_dev = np.std(df_clean['pobreza_mujeres'] - p(df_clean['brecha_salarial'] * 100))
-y_upper = p(x_line) + std_dev * 1.96
-y_lower = p(x_line) - std_dev * 1.96
-
-fig5.add_trace(go.Scatter(
-    x=np.concatenate([x_line, x_line[::-1]]),
-    y=np.concatenate([y_upper, y_lower[::-1]]),
-    fill='toself',
-    fillcolor='rgba(123, 47, 190, 0.10)',
-    line=dict(color='rgba(255,255,255,0)'),
-    hoverinfo="skip",
-    showlegend=False
-))
-
-fig5.add_trace(go.Scatter(
-    x=x_line, y=p(x_line), mode='lines',
-    line=dict(color=COLOR_ALERTA, width=2, dash='dash'),
-    name='Tendencia', hoverinfo='skip'
-))
-fig5.update_layout(
-    **CHART_LAYOUT, height=380,
-    xaxis=dict(title='Brecha salarial (%)', gridcolor='rgba(0,0,0,0.05)'),
-    yaxis=dict(title='Pobreza laboral femenina (%)', gridcolor='rgba(0,0,0,0.05)'),
-    annotations=[dict(
-        x=0.05, y=0.95, xref='paper', yref='paper',
-        text=f'R² = {r2:.2f} | Correlación de Pearson. No implica causalidad.',
-        showarrow=False,
-        align='left',
-        font=dict(size=10, color='gray'),
-        bgcolor='rgba(255,255,255,0.8)',
-        bordercolor='lightgray', borderwidth=1, borderpad=4
-    )]
+fig = px.choropleth(
+    _df_mapa,
+    geojson=_geojson_mx,
+    locations='EntidadGeo',
+    featureidkey="properties.name",
+    color='brecha_fmt',
+    color_continuous_scale="Purples",
+    range_color=[10, 30],
+    hover_name='EntidadGeo',
+    hover_data={'EntidadGeo': False, 'brecha_fmt': ':.1f'},
+    labels={'brecha_fmt': 'Brecha Salarial (%)'},
 )
-fig5.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'correlacion_brecha', 'format': 'png'}})
+
+fig.update_geos(fitbounds="locations", visible=False)
+fig.update_layout(
+    paper_bgcolor='white',
+    margin={"r": 0, "t": 50, "l": 0, "b": 60},
+)
+fig.add_annotation(
+    text="Fuente: INEGI (ENOE), cálculo propio con ingreso promedio ponderado por rango salarial.",
+    xref="paper", yref="paper",
+    x=0, y=-0.15,
+    showarrow=False,
+    font=dict(size=10, color="gray"),
+    align="left"
+)
+
+fig.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename': 'mapa_brecha_entidades', 'format': 'png'}})
 ```
 
-::: chart-interpretation
-La tendencia señala que cuando la brecha salarial se dispara, la incidencia de pobreza en mujeres aumenta. Ambas variables coexisten como síntomas de un mercado laboral que empobrece a quienes menos ganan de origen.
 :::
-:::
-:::::
-
-<!-- TABLA: Calculadora de impacto -->
-
-::: {#calculadora .chart-card}
-[CALCULADORA DE IMPACTO: EL COSTO DE LA BRECHA SALARIAL]{.chart-title}
-
-El impacto económico de la brecha salarial crece exponencialmente con el tiempo. Asumiendo la brecha histórica promedio del **25.1%** vista en los datos, aquí calculamos cuánto ingreso potencial pierde una mujer comparada con un hombre en el mismo puesto, asumiendo sueldos hipotéticos mensuales.
-
-```{python}
-sueldos = [8000, 15000, 25000, 40000]
-brecha_decimal = pct_promedio_hist / 100
-
-calc_df = pd.DataFrame({'Sueldo Mensual Base ($)': sueldos})
-calc_df['Pérdida a 5 años ($)'] = calc_df['Sueldo Mensual Base ($)'] * brecha_decimal * 12 * 5
-calc_df['Pérdida a 10 años ($)'] = calc_df['Sueldo Mensual Base ($)'] * brecha_decimal * 12 * 10
-calc_df['Pérdida a 20 años ($)'] = calc_df['Sueldo Mensual Base ($)'] * brecha_decimal * 12 * 20
-
-for col in calc_df.columns:
-    calc_df[col] = calc_df[col].apply(lambda x: f"${x:,.0f}")
-
-fig_table = go.Figure(data=[go.Table(
-    header=dict(values=list(calc_df.columns),
-                fill_color=COLOR_AZUL,
-                font=dict(color='white', size=11, family='DM Sans, Arial, sans-serif'),
-                align='center'),
-    cells=dict(values=[calc_df[col] for col in calc_df.columns],
-               fill_color=[['white', 'rgba(0,0,0,0.02)']*2]*4,
-               font=dict(color='#333', size=11, family='DM Sans, Arial, sans-serif'),
-               height=30,
-               align='center'))
-])
-fig_table.update_layout(margin=dict(l=0, r=0, t=10, b=0), height=150)
-fig_table.show(config={'displayModeBar': False})
-```
 
 ::: chart-interpretation
-En un horizonte de tan solo 10 años, una mujer que percibe el equivalente a un sueldo mensual "base" de $15,000 MXN, pierde casi medio millón de pesos en total respecto a su colega hombre. Ese es el verdadero costo que frena la independencia financiera y vulnera a miles de familias.
+**Las 3 entidades con mayor brecha**
+La brecha es sistemáticamente más profunda en estados con economías rurales y alta informalidad como Guerrero e Hidalgo.
+
+**Nota de regionalización:** Las entidades con mayor concentración de informalidad y economías predominantemente rurales — Hidalgo, Colima y Guerrero — registran las brechas más pronunciadas del país. Estas regiones combinan altas tasas de subempleo femenino con acceso limitado a empleos formales, lo que amplifica la distancia salarial respecto a entidades industrializadas como Baja California o Ciudad de México.
 :::
-:::
-::::::::::
+
+:::::::::::::::::::::
 
 <!-- ============================================================
-     SECCIÓN 2.5: CAUSAS — El por qué estructural de la brecha
+     SECCIÓN 2: ¿POR QUÉ PASA? — El por qué estructural de la brecha
      ============================================================ -->
 
 :::::::::: {#causas .section-anchor}
@@ -629,12 +490,13 @@ El tiempo robado: por qué la brecha no se cierra sola
 
 [La brecha salarial no es un accidente del mercado. Tres causas estructurales la sostienen — y ninguna se resolverá sin política pública específica.]{.section-subtitle}
 
-<!-- ── Causas 1 y 2 lado a lado ───────────────────────────────────────────── -->
+
+<!-- ── BRECHA GENERACIONAL (izq) + SEGUNDA JORNADA (der) ───────────────── -->
 
 ::::: {.two-col .col-5-5}
 
 ::: {#chart-generacional .chart-card .section-anchor}
-[CAUSA 1 — LA BRECHA SE HEREDA POR GENERACIÓN]{.chart-title}
+[BRECHA SALARIAL POR GRUPO GENERACIONAL]{.chart-title}
 
 ```{python}
 _GEN_CORTO = {
@@ -650,7 +512,6 @@ _gen['Generacion'] = _gen['Generacion'].map(_GEN_CORTO)
 
 fig_gen = go.Figure()
 
-# Líneas-conector (la brecha visualmente)
 for r in _gen.itertuples():
     fig_gen.add_trace(go.Scatter(
         x=[r.ing_mujeres, r.ing_hombres],
@@ -660,7 +521,6 @@ for r in _gen.itertuples():
         opacity=0.55, hoverinfo='skip', showlegend=False
     ))
 
-# Punto Mujeres (sin texto inline para evitar overflow en columna estrecha)
 fig_gen.add_trace(go.Scatter(
     x=_gen['ing_mujeres'], y=_gen['Generacion'],
     mode='markers',
@@ -676,7 +536,6 @@ fig_gen.add_trace(go.Scatter(
     hovertemplate='<b>%{y}</b><br>Hombres: $%{x:,.0f}<extra></extra>',
 ))
 
-# Etiqueta de brecha % al centro de cada línea
 for r in _gen.itertuples():
     fig_gen.add_annotation(
         x=(r.ing_hombres + r.ing_mujeres) / 2, y=r.Generacion,
@@ -696,16 +555,17 @@ fig_gen.update_layout(
                gridcolor='rgba(0,0,0,0.05)', tickformat='$,.0f',
                range=[5000, 14500]),
 )
-fig_gen.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'brecha_generacional', 'format': 'png'}})
+_fuente(fig_gen, "INEGI (ENOE)")
+fig_gen.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename': 'brecha_generacional', 'format': 'png'}})
 ```
 
 ::: chart-interpretation
-La brecha **no disminuye con las nuevas generaciones, crece con la edad**: 14% en la Gen Z, 24% en quienes hoy tienen 60+. Cada década de vida laboral amplía el costo de ser mujer en México — la paridad generacional es una ilusión estadística, no una tendencia real.
+La brecha **no disminuye con las nuevas generaciones, crece con la edad**: 14% en la Gen Z al 24.3% en mayores de 60 años. Cada década de vida laboral amplía el costo de ser mujer en México — la paridad generacional es una ilusión estadística. La brecha es **acumulativa**: se hereda y se profundiza con cada etapa del ciclo de vida.
 :::
 :::
 
 ::: {#chart-jornada .chart-card .section-anchor}
-[CAUSA 2 — LA SEGUNDA JORNADA NO REMUNERADA]{.chart-title}
+[HORAS SEMANALES DE TRABAJO NO REMUNERADO POR ACTIVIDAD]{.chart-title}
 
 ```{python}
 _FUN_ORDEN = ['Cuidados y apoyo', 'Alimentos', 'Limpieza vivienda',
@@ -775,20 +635,19 @@ fig_horas.update_layout(
     ),
     yaxis=dict(gridcolor='rgba(0,0,0,0)', tickfont=dict(size=10.5)),
 )
-fig_horas.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'horas_no_remuneradas', 'format': 'png'}})
+_fuente(fig_horas, "INEGI (ENUT 2019)")
+fig_horas.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename': 'horas_no_remuneradas', 'format': 'png'}})
 ```
 
 ::: chart-interpretation
-Una mujer dedica **{python} f"{_horas_total_muj:.1f}"** horas/semana al trabajo no remunerado del hogar; un hombre, **{python} f"{_horas_total_hom:.1f}"**. La asimetría máxima está en cuidados y alimentos (3× a 4× más). Esta jornada invisible explica por qué muchas mujeres terminan en empleos informales o de medio tiempo.
+Una mujer dedica **8.03** horas/semana al trabajo no remunerado del hogar; un hombre, **4.15**. La asimetría máxima está en cuidados y alimentos (3× a 4× más). Esta jornada invisible explica por qué muchas mujeres terminan en empleos informales o de medio tiempo.
 :::
 :::
 
 :::::
 
-<!-- ── Causa 3: el costo invisible — KPIs a la izquierda, gráfica a la derecha -->
-
 ::: {#chart-costo-invisible .chart-card .section-anchor}
-[CAUSA 3 — EL COSTO INVISIBLE QUE EL PIB NO CUENTA]{.chart-title}
+[EL TRABAJO NO REMUNERADO QUE SOSTIENE LA ECONOMÍA]{.chart-title}
 
 ::::: {.two-col .col-4-6}
 
@@ -829,11 +688,21 @@ _dec = (df_decil[(df_decil['anio'] == _anio_decil)
         .reindex(_dec_orden))
 _dec_pct = _dec.div(_dec.sum(axis=1), axis=0) * 100
 
+_dec_orden_list = list(_dec_orden)
+_label_mujeres = [
+    f"{v:.0f}%" if d in ('I', 'X') else ""
+    for d, v in zip(_dec_orden_list, _dec_pct['Mujeres'])
+]
+_label_hombres = [
+    f"{v:.0f}%" if d in ('I', 'X') else ""
+    for d, v in zip(_dec_orden_list, _dec_pct['Hombres'])
+]
+
 fig_dec = go.Figure()
 fig_dec.add_trace(go.Bar(
     name='Mujeres', x=_dec.index, y=_dec_pct['Mujeres'],
     marker=dict(color=COLOR_FEMENINO, opacity=0.9),
-    text=[f"{v:.0f}%" for v in _dec_pct['Mujeres']],
+    text=_label_mujeres,
     textposition='inside', textfont=dict(color='white', size=11),
     hovertemplate='<b>Decil %{x}</b><br>Mujeres: %{customdata:,.0f} millones MXN<br>(%{y:.1f}% del decil)<extra></extra>',
     customdata=_dec['Mujeres'],
@@ -841,7 +710,7 @@ fig_dec.add_trace(go.Bar(
 fig_dec.add_trace(go.Bar(
     name='Hombres', x=_dec.index, y=_dec_pct['Hombres'],
     marker=dict(color=COLOR_MASCULINO, opacity=0.9),
-    text=[f"{v:.0f}%" for v in _dec_pct['Hombres']],
+    text=_label_hombres,
     textposition='inside', textfont=dict(color='white', size=11),
     hovertemplate='<b>Decil %{x}</b><br>Hombres: %{customdata:,.0f} millones MXN<br>(%{y:.1f}% del decil)<extra></extra>',
     customdata=_dec['Hombres'],
@@ -857,137 +726,268 @@ fig_dec.update_layout(
     yaxis=dict(title='% del valor del trabajo no remunerado del decil',
                gridcolor='rgba(0,0,0,0.05)', range=[0, 100], ticksuffix='%'),
 )
-fig_dec.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'valor_trabajo_no_remunerado_decil', 'format': 'png'}})
+_fuente(fig_dec, "INEGI (Cuenta Satélite TNRH)")
+fig_dec.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename': 'valor_trabajo_no_remunerado_decil', 'format': 'png'}})
 ```
 :::
 
 :::::
 
 ::: chart-interpretation
-La cuenta satélite del INEGI dimensiona lo invisible: el trabajo no remunerado del hogar vale **${python} f"{valor_total_billones:.1f}"** billones de pesos al año (~{python} f"{pct_pib_no_remunerado:.0f}"% del PIB), y las mujeres aportan ~{python} f"{pct_aporte_mujeres:.0f}"% de ese valor **en todos los deciles de ingreso**. La proporción femenina es prácticamente constante del decil más pobre al más rico: ningún nivel socioeconómico libera a las mujeres de esta carga. Es el subsidio silencioso que sostiene la economía mexicana sin aparecer en el PIB.
-2:::
+La cuenta satélite del INEGI dimensiona lo invisible: el trabajo no remunerado del hogar vale **8.0** billones de pesos al año (23.9% del PIB), y las mujeres aportan 73% de ese valor **en todos los deciles de ingreso**. La proporción femenina es prácticamente constante del decil más pobre al más rico: ningún nivel socioeconómico libera a las mujeres de esta carga. Es el subsidio silencioso que sostiene la economía mexicana sin aparecer en el PIB.
 :::
-::::::::::
+:::
 
-<!-- ============================================================
-     SECCIÓN 3: ENTIDADES — Dimensión geográfica
-     ============================================================ -->
+<!-- ── CAUSA 2: La informalidad como trampa ───────────────────────────────── -->
 
-
-:::::::::: {#entidades .section-anchor}
 ::: section-title
-¿Dónde es más profunda la brecha? La desigualdad también tiene geografía
+Los mecanismos de la trampa: informalidad y correlación
 :::
 
-[El ingreso promedio ponderado por rango salarial revela que la brecha no es homogénea: entidades con mayor informalidad concentran las disparidades más amplias.]{.section-subtitle}
+[La informalidad laboral y la brecha salarial no son problemas aislados — se retroalimentan para mantener a las mujeres en la pobreza.]{.section-subtitle}
+
+::::: {.two-col .col-5-5}
+::: {#chart-informal .chart-card .section-anchor}
+[POBREZA LABORAL: FORMAL VS INFORMAL]{.chart-title}
+
+```{python}
+fig4 = go.Figure()
+fig4.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=df_clean['pobreza_informal'],
+    name='Sector Informal', line=dict(color=COLOR_ALERTA, width=2.5), mode='lines',
+    hovertemplate='Informal<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
+))
+fig4.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=df_clean['pobreza_formal'],
+    name='Sector Formal', line=dict(color=COLOR_AZUL, width=2.5), mode='lines',
+    hovertemplate='Formal<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
+))
+fig4.update_layout(
+    **CHART_LAYOUT, height=380,
+    xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
+    yaxis=dict(title='Pobreza laboral (%)', gridcolor='rgba(0,0,0,0.05)')
+)
+_fuente(fig4, "CONEVAL (ITLP)")
+fig4.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename': 'formal_vs_informal', 'format': 'png'}})
+```
+
+::: chart-interpretation
+La precariedad formal es casi inexistente en comparación con la informal. Esto penaliza severamente a las mujeres, obligadas a tomar empleos informales por las cargas de cuidado en sus hogares, cayendo de forma automática en la pobreza laboral.
+:::
+:::
 
 ::: chart-card
-[DISPARIDAD SALARIAL ENTRE HOMBRES Y MUJERES POR ENTIDAD FEDERATIVA (Q4 2025)]{.chart-title}
+[CORRELACIÓN: BRECHA SALARIAL VS POBREZA LABORAL FEMENINA]{.chart-title}
 
 ```{python}
-_top3 = df_entidad.nlargest(3, 'brecha')
-_bot3 = df_entidad.nsmallest(3, 'brecha')
+_brecha_vals = df_clean['brecha_salarial'] * 100
+_pob_vals    = df_clean['pobreza_mujeres']
+_dist_ideal  = np.sqrt((_brecha_vals - 15)**2 + (_pob_vals - 12)**2)
 
-import plotly.express as px
-import pandas as pd
-import json
-import requests
+fig5 = go.Figure()
+fig5.add_trace(go.Scatter(
+    x=_brecha_vals, y=_pob_vals,
+    mode='markers',
+    marker=dict(
+        color=_dist_ideal,
+        colorscale=[[0, '#10B981'], [0.5, '#F59E0B'], [1, '#5B21B6']],
+        reversescale=False,
+        size=8, opacity=0.82,
+        colorbar=dict(
+            title='Distancia<br>al ideal',
+            thickness=12, len=0.6,
+            tickformat='.0f'
+        ),
+        line=dict(width=0.5, color='white')
+    ),
+    hovertemplate='Brecha: %{x:.1f}%<br>Pobreza fem.: %{y:.1f}%<extra></extra>',
+    name='Trimestral'
+))
+z = np.polyfit(df_clean['brecha_salarial'] * 100, df_clean['pobreza_mujeres'], 1)
+p = np.poly1d(z)
+x_line = np.linspace(df_clean['brecha_salarial'].min()*100, df_clean['brecha_salarial'].max()*100, 50)
 
-# 1. Cargar el GeoJSON (Verificado)
-url = "https://raw.githubusercontent.com/angelnmara/geojson/master/mexicoHigh.json"
-response = requests.get(url)
-geojson_data = json.loads(response.content.decode('utf-8-sig'))
+corr = np.corrcoef(df_clean['brecha_salarial'] * 100, df_clean['pobreza_mujeres'])[0, 1]
+r2 = corr ** 2
 
-# 2. DataFrame Corregido (32 estados = 32 valores)
-# He corregido los '15,2' por '15.2' para que Python los lea como un solo número
-df_mapa = pd.DataFrame({
-    'Estado': [
-        'Zacatecas', 'Yucatán', 'Veracruz', 'Tlaxcala', 'Tamaulipas',
-        'Tabasco', 'Sonora', 'Sinaloa', 'San Luis Potosí', 'Quintana Roo',
-        'Querétaro', 'Puebla', 'Oaxaca', 'Nuevo León', 'Nayarit',
-        'Morelos', 'Michoacán', 'México', 'Jalisco', 'Hidalgo',
-        'Guerrero', 'Guanajuato', 'Durango', 'Ciudad de México',
-        'Colima', 'Coahuila', 'Chihuahua', 'Chiapas',
-        'Campeche', 'Baja California Sur', 'Baja California', 'Aguascalientes'
-    ],
-    'Brecha': [
-        16.1, 21.5, 20.8, 24.2, 18.5, 
-        21.0, 22.4, 21.0, 15.2, 17.9, 
-        22.8, 19.7, 24.5, 20.5, 20.8, 
-        20.2, 22.3, 13.6, 24.5, 28.2, 
-        25.1, 21.5, 20.3, 15.6, 25.8, 
-        16.2, 19.2, 19.2, 10.2, 21.9, 
-        20.8, 17.4
+std_dev = np.std(df_clean['pobreza_mujeres'] - p(df_clean['brecha_salarial'] * 100))
+y_upper = p(x_line) + std_dev * 1.96
+y_lower = p(x_line) - std_dev * 1.96
+
+fig5.add_trace(go.Scatter(
+    x=np.concatenate([x_line, x_line[::-1]]),
+    y=np.concatenate([y_upper, y_lower[::-1]]),
+    fill='toself',
+    fillcolor='rgba(123, 47, 190, 0.10)',
+    line=dict(color='rgba(255,255,255,0)'),
+    hoverinfo="skip",
+    showlegend=False
+))
+
+fig5.add_trace(go.Scatter(
+    x=x_line, y=p(x_line), mode='lines',
+    line=dict(color=COLOR_ALERTA, width=2, dash='dash'),
+    name='Tendencia', hoverinfo='skip'
+))
+fig5.update_layout(
+    **CHART_LAYOUT, height=380,
+    xaxis=dict(title='Brecha salarial (%)', gridcolor='rgba(0,0,0,0.05)'),
+    yaxis=dict(title='Pobreza laboral femenina (%)', gridcolor='rgba(0,0,0,0.05)'),
+    annotations=[
+        dict(
+            x=0.05, y=0.95, xref='paper', yref='paper',
+            text=f'R² = {r2:.2f} | Correlación de Pearson. No implica causalidad.',
+            showarrow=False, align='left',
+            font=dict(size=10, color='gray'),
+            bgcolor='rgba(255,255,255,0.8)',
+            bordercolor='lightgray', borderwidth=1, borderpad=4
+        ),
+        dict(
+            x=15, y=12, xref='x', yref='y',
+            text='Punto ideal', showarrow=True, arrowhead=2,
+            ax=30, ay=-25, font=dict(size=9, color='#10B981'),
+            arrowcolor='#10B981'
+        )
     ]
-})
-
-# 3. Crear el Mapa
-fig = px.choropleth(
-    df_mapa,
-    geojson=geojson_data,
-    locations='Estado',
-    featureidkey="properties.name",
-    color='Brecha',
-    color_continuous_scale="Purples",
-    range_color=[10, 30],
-    hover_name='Estado',
-    hover_data={'Estado': False, 'Brecha': ':.1f%'},
-    labels={'Brecha': 'Brecha Salarial (%)'},
 )
-
-# 4. Ajustes de visualización
-fig.update_geos(fitbounds="locations", visible=False)
-fig.update_layout(
-    margin={"r":0,"t":50,"l":0,"b":0},
-    paper_bgcolor='white'
-)
-
-# Agregar nota al pie dentro del gráfico
-fig.add_annotation(
-    text="Fuente: INEGI (ENOE), tabulados interactivos. | Calculo propio",
-    xref="paper", yref="paper",
-    x=0, y=-0.15, # Posición en la esquina inferior izquierda
-    showarrow=False,
-    font=dict(size=10, color="gray"),
-    align="left"
-)
-
-# Ajustar el margen inferior para que quepa la nota
-fig.update_layout(margin={"r":0,"t":50,"l":0,"b":60})
-
-fig.show()
+_fuente(fig5, "INEGI (ENOE) · CONEVAL (ITLP)")
+fig5.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename': 'correlacion_brecha', 'format': 'png'}})
 ```
 
-::::: {.two-col .col-5-5 style="margin-top: 1rem;"}
 ::: chart-interpretation
-**Las 3 entidades con mayor brecha**
-
-```{python}
-from IPython.display import Markdown
-_filas_top = '\n'.join([f"- **{r.Entidad}** — {r.brecha:.1f}%" for r in _top3.itertuples()])
-Markdown(_filas_top)
-```
+La tendencia señala que cuando la brecha salarial se dispara, la incidencia de pobreza en mujeres aumenta. Ambas variables coexisten como síntomas de un mercado laboral que empobrece a quienes menos ganan de origen.
 :::
-
-::: chart-interpretation
-**Las 3 entidades con menor brecha**
-
-```{python}
-_filas_bot = '\n'.join([f"- **{r.Entidad}** — {r.brecha:.1f}%" for r in _bot3.itertuples()])
-Markdown(_filas_bot)
-```
 :::
 :::::
 
+<!-- ── JEFATURA (izq) + EVOLUCIÓN BRECHA (der) ──────────────────────────── -->
+
+::: section-title
+La brecha que crece con la edad
+:::
+
+[La desigualdad no es estática: se acumula y profundiza con cada etapa del ciclo de vida laboral, dejando a las mujeres mayores en la posición más vulnerable.]{.section-subtitle}
+
+::::: {.two-col .col-5-5}
+
+::: {#chart-jefatura .chart-card .section-anchor}
+[POBREZA LABORAL POR JEFATURA DE HOGAR Y SEXO]{.chart-title}
+
+```{python}
+fig6 = go.Figure()
+fig6.add_trace(go.Scatter(
+    x=pd.concat([df_clean['fecha'], df_clean['fecha'][::-1]]),
+    y=pd.concat([df_clean['pob_jefatura_mujeres'], df_clean['pob_jefatura_hombres'][::-1]]),
+    fill='toself', fillcolor='rgba(123, 47, 190, 0.08)',
+    line=dict(color='rgba(0,0,0,0)'), showlegend=False, hoverinfo='skip'
+))
+fig6.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=df_clean['pob_jefatura_mujeres'],
+    name='Jefatura Femenina', line=dict(color=COLOR_FEMENINO, width=2.5),
+    hovertemplate='Jef. Femenina<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
+))
+fig6.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=df_clean['pob_jefatura_hombres'],
+    name='Jefatura Masculina', line=dict(color=COLOR_MASCULINO, width=2.5),
+    hovertemplate='Jef. Masculina<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
+))
+fig6.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=df_clean['pob_jefatura_nal'],
+    name='Nacional', line=dict(color=COLOR_AZUL, width=1.5, dash='dot'),
+    hovertemplate='Nacional<br>%{x|%Y-%m}: %{y:.1f}%<extra></extra>'
+))
+fig6.update_layout(
+    **CHART_LAYOUT, height=380,
+    xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
+    yaxis=dict(title='Hogares en pobreza laboral (%)', gridcolor='rgba(0,0,0,0.05)')
+)
+_fuente(fig6, "CONEVAL (ITLP)")
+fig6.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename': 'jefatura_hogar', 'format': 'png'}})
+```
+
 ::: chart-interpretation
-La intensidad del color expone una geografía clara de la desigualdad: las entidades con mayor informalidad y economías rurales concentran las brechas más pronunciadas, donde las mujeres quedan confinadas a los rangos salariales más bajos. Ciudad de México, a pesar de ser el polo económico del país, aún registra una brecha relevante — evidencia de que la desigualdad persiste incluso en los mercados laborales más desarrollados.
+Si una mujer es jefa de hogar, la probabilidad de que su familia esté en pobreza laboral supera ampliamente a los hogares liderados por hombres. Esto muestra una profunda debilidad estructural en el sustento de miles de familias.
 :::
 :::
+
+::: {#chart-brecha-evol .chart-card .section-anchor}
+[EVOLUCIÓN DE LA BRECHA SALARIAL (%)]{.chart-title}
+
+```{python}
+brecha_pct = df_clean['brecha_salarial'] * 100
+fig7 = go.Figure()
+fig7.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=brecha_pct,
+    name='Brecha Salarial', line=dict(color=COLOR_ALERTA, width=2.5),
+    fill='tozeroy', fillcolor='rgba(217, 92, 58, 0.10)', mode='lines',
+    hovertemplate='Brecha: %{y:.1f}%<br>%{x|%Y-%m}<extra></extra>'
+))
+rolling = brecha_pct.rolling(window=4, min_periods=1).mean()
+fig7.add_trace(go.Scatter(
+    x=df_clean['fecha'], y=rolling,
+    name='Tendencia (12M)', line=dict(color=COLOR_AZUL, width=2, dash='dash'),
+    mode='lines', hovertemplate='Tendencia: %{y:.1f}%<br>%{x|%Y-%m}<extra></extra>'
+))
+fig7.update_layout(
+    **CHART_LAYOUT, height=380,
+    xaxis=dict(title='Periodo', gridcolor='rgba(0,0,0,0.05)', dtick='M24'),
+    yaxis=dict(title='Brecha salarial (%)', gridcolor='rgba(0,0,0,0.05)')
+)
+_fuente(fig7, "INEGI (ENOE)")
+fig7.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename': 'evolucion_brecha', 'format': 'png'}})
+```
+
+::: chart-interpretation
+La tendencia secular muestra estancamiento, la desigualdad de género económica no está disminuyendo de la manera esperada. Las medidas existentes no logran penetrar la inercia del mercado.
+:::
+:::
+
+:::::
+
+<!-- ── CALCULADORA: síntesis antes de proyecciones ────────────────────────── -->
+
+::: {#calculadora .chart-card}
+[CALCULADORA DE IMPACTO: EL COSTO DE LA BRECHA SALARIAL]{.chart-title}
+
+El impacto económico de la brecha salarial crece exponencialmente con el tiempo. Asumiendo la brecha histórica promedio del **25.1%** vista en los datos, aquí calculamos cuánto ingreso potencial pierde una mujer comparada con un hombre en el mismo puesto, asumiendo sueldos hipotéticos mensuales.
+
+```{python}
+sueldos = [8000, 15000, 25000, 40000]
+brecha_decimal = pct_promedio_hist / 100
+
+calc_df = pd.DataFrame({'Sueldo Mensual Base ($)': sueldos})
+calc_df['Pérdida a 5 años ($)'] = calc_df['Sueldo Mensual Base ($)'] * brecha_decimal * 12 * 5
+calc_df['Pérdida a 10 años ($)'] = calc_df['Sueldo Mensual Base ($)'] * brecha_decimal * 12 * 10
+calc_df['Pérdida a 20 años ($)'] = calc_df['Sueldo Mensual Base ($)'] * brecha_decimal * 12 * 20
+
+for col in calc_df.columns:
+    calc_df[col] = calc_df[col].apply(lambda x: f"${x:,.0f}")
+
+fig_table = go.Figure(data=[go.Table(
+    header=dict(values=list(calc_df.columns),
+                fill_color=COLOR_AZUL,
+                font=dict(color='white', size=11, family='DM Sans, Arial, sans-serif'),
+                align='center'),
+    cells=dict(values=[calc_df[col] for col in calc_df.columns],
+               fill_color=[['white', 'rgba(0,0,0,0.02)']*2]*4,
+               font=dict(color='#333', size=11, family='DM Sans, Arial, sans-serif'),
+               height=30,
+               align='center'))
+])
+fig_table.update_layout(margin=dict(l=0, r=0, t=10, b=0), height=150)
+fig_table.show(config={'displayModeBar': False})
+```
+
+::: chart-interpretation
+En un horizonte de tan solo 10 años, una mujer que percibe el equivalente a un sueldo mensual "base" de $15,000 MXN, pierde casi medio millón de pesos en total respecto a su colega hombre. Ese es el verdadero costo que frena la independencia financiera y vulnera a miles de familias.
+:::
+:::
+
 ::::::::::
 
 <!-- ============================================================
-     SECCIÓN 4: PROYECCIONES — El futuro de la brecha
-     ============================================================ -->
+    SECCIÓN 3: ¿HACIA DÓNDE VAMOS? — Proyecciones a 10 años
+    ============================================================ -->
 
 :::::::::: {#proyecciones .section-anchor}
 ::: section-title
@@ -1072,7 +1072,8 @@ fig_proy.update_layout(
     ),
 )
 
-fig_proy.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'proyeccion_brecha', 'format': 'png'}})
+_fuente(fig_proy, "INEGI (ENOE) · modelos propios")
+fig_proy.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename': 'proyeccion_brecha', 'format': 'png'}})
 ```
 
 ::: chart-interpretation
@@ -1138,7 +1139,8 @@ fig_proy_pob.update_layout(
     ),
 )
 
-fig_proy_pob.show(config={'displayModeBar': True, 'toImageButtonOptions': {'filename': 'proyeccion_pobreza_mujeres', 'format': 'png'}})
+_fuente(fig_proy_pob, "CONEVAL (ITLP) · modelos propios")
+fig_proy_pob.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename': 'proyeccion_pobreza_mujeres', 'format': 'png'}})
 ```
 
 ::: chart-interpretation
@@ -1240,7 +1242,7 @@ Las proyecciones muestran que, incluso en el escenario más optimista, **millone
 
 
 <!-- ============================================================
-     SECCIÓN 5: ACCIONES — Propuestas de intervención
+     SECCIÓN 4: ¿QUÉ PODEMOS HACER? — Marco legal y acciones
      ============================================================ -->
 
 
@@ -1249,61 +1251,140 @@ Las proyecciones muestran que, incluso en el escenario más optimista, **millone
 ¿Qué hacer? Acciones para cerrar la brecha
 :::
 
-[De los datos a las decisiones: intervenciones necesarias para romper el ciclo de pobreza laboral femenina.]{.section-subtitle}
+[La ley ya lo dice. El mercado no lo cumple.]{.section-subtitle}
 
 ::: acciones-intro
-Los datos evidencian una realidad estructural: **la pobreza laboral en México tiene rostro de mujer**. La brecha salarial de género no es solo un indicador numérico — es el mecanismo que condena a millones de mujeres a vivir por debajo de la línea de pobreza extrema, aun cuando trabajan. Las acciones necesarias son urgentes y deben operar en múltiples niveles.
+México tiene el marco legal para cerrar la brecha. El problema no es la ausencia de normas — es la ausencia de consecuencias cuando se incumplen.
 :::
 
-:::::: acciones-grid
-::: accion-card
-[🏛️ Política Pública]{.accion-category} 
+<!-- Marco legal vigente -->
 
-### 1. Formalización del empleo femenino
-Solo el 0.8% de trabajadores formales están en pobreza laboral, frente al 20.1% en informalidad. Programas de formalización orientados a mujeres reducirían drásticamente la pobreza.
-[Impacto Alto]{.badge-impacto }
+::::: marco-legal-grid
 
-### 2. Legislación de equidad salarial
-Implementar leyes de transparencia salarial que obliguen a las empresas a reportar brechas y corregirlas.
-[Impacto Alto]{.badge-impacto }
+::: ley-bloque
+[CONSTITUCIÓN POLÍTICA — Art. 123, fr. VII]{.ley-etiqueta}
 
-### 3. Sistema nacional de cuidados
-La informalidad femenina está ligada a las responsabilidades de cuidado. Un sistema de cuidados liberaría a las mujeres para acceder a empleos formales.
-[Impacto Alto]{.badge-impacto}
+> "Para trabajo igual debe corresponder salario igual, sin tener en cuenta sexo ni nacionalidad."
+
+_(CPEUM, 1917, art. 123)_
+
+[Realidad: brecha promedio del 22.6%]{.chip-realidad}
 :::
 
-::: accion-card
-[📊 Investigación y Datos]{.accion-category}
+::: ley-bloque
+[LEY FEDERAL DEL TRABAJO — Art. 86]{.ley-etiqueta}
 
-### 4. Monitoreo trimestral
-Tableros como este deben institucionalizarse para dar seguimiento continuo a la intersección entre género y pobreza laboral.
-[Impacto Medio]{.badge-impacto}
+> "A trabajo igual, desempeñado en puesto, jornada y condiciones de eficiencia también iguales, debe corresponder salario igual… se promoverán acciones para erradicar las prácticas retributivas desiguales."
 
-### 5. Desagregación interseccional
-Profundizar el análisis por etnicidad, región, edad y nivel educativo para identificar a las mujeres más vulnerables.
-[Impacto Medio]{.badge-impacto}
+_(LFT, 1970, art. 86)_
 
-### 6. Evaluación de impacto
-Medir el efecto causal de programas existentes de empoderamiento económico femenino sobre la reducción de pobreza laboral.
-[Impacto Medio]{.badge-impacto .amarillo} 
+[Realidad: mujeres ganan 77.4¢ por cada peso masculino]{.chip-realidad}
 :::
 
-::: accion-card
-[🤝 Sociedad y Sector Privado]{.accion-category}
+::: ley-bloque
+[LEY GENERAL DE IGUALDAD — Art. 1 + NMX-R-025-SCFI-2015]{.ley-etiqueta}
 
-### 7. Certificaciones de equidad
-Promover sellos de equidad salarial en empresas, con incentivos fiscales para quienes demuestren paridad.
-[Impacto Alto]{.badge-impacto }
+> "Regular y garantizar la igualdad de oportunidades y de trato entre mujeres y hombres… promoviendo el empoderamiento de las mujeres, la paridad de género y la lucha contra toda discriminación basada en el sexo o género."
 
-### 8. Educación financiera con perspectiva de género
-Programas comunitarios que empoderen a las mujeres en negociación salarial.
-[Impacto Bajo]{.badge-impacto }
+_(LGIMH, 2006, art. 1)_
 
-### 9. Transparencia ciudadana
-Herramientas de datos abiertos que permitan monitorear y exigir rendición de cuentas sobre equidad de género en el mercado laboral.
-[Impacto Medio]{.badge-impacto } 
+[Realidad: el 39.5% de hogares en pobreza tiene jefatura femenina]{.chip-realidad}
 :::
+
+:::::
+
+---
+
+<!-- Acciones por nivel de responsabilidad -->
+
+[LO QUE CADA QUIEN PUEDE HACER — AHORA]{.acciones-nivel-titulo}
+
+:::::: niveles-grid
+
+::: nivel-card
+[ESTADO]{.nivel-actor-label}
+
+> "Sin política pública, el mercado reproduce lo que ya existe."
+
+::: nivel-accion
+**Formalización del empleo femenino**
+
+El 20.1% de trabajadoras informales vive en pobreza. El 0.8% de las formales, también. La formalización es la salida.
+:::
+
+::: nivel-accion
+**Transparencia salarial con sanciones reales**
+
+La LFT ya exige paridad. Lo que falta son consecuencias cuando no se cumple.
+:::
+
+::: nivel-accion
+**Sistema nacional de cuidados**
+
+Mientras el hogar sea responsabilidad exclusiva de las mujeres, la igualdad laboral es imposible.
+:::
+:::
+
+::: nivel-card
+[EMPRESAS]{.nivel-actor-label}
+
+> "El 0.8% de trabajadoras formales vive en pobreza. Las empresas eligen en qué lado estar."
+
+::: nivel-accion
+**Certificarse en NMX-R-025**
+
+La norma de igualdad laboral ya existe. Adoptarla no es altruismo — es cumplir la ley y atraer talento.
+:::
+
+::: nivel-accion
+**Publicar brechas salariales internas**
+
+Lo que no se nombra, no se corrige. Reportar la brecha propia es el primer paso para cerrarla.
+:::
+:::
+
+::: nivel-card
+[PERSONAS]{.nivel-actor-label}
+
+> "La desigualdad también se sostiene en decisiones cotidianas."
+
+::: nivel-accion
+**Redistribuir el trabajo del hogar**
+
+Las mujeres dedican el doble de horas al trabajo no remunerado. Esa carga no es natural — es negociable.
+:::
+
+::: nivel-accion
+**Negociar con datos**
+
+Conocer la brecha propia y exigir paridad salarial no es confrontación: es ejercer un derecho constitucional.
+:::
+
+::: nivel-accion
+**Exigir rendición de cuentas**
+
+Votar, denunciar, compartir datos. La presión ciudadana es el mecanismo que convierte las leyes en realidad.
+:::
+:::
+
 ::::::
+
+::: frase-cierre
+Esperar a que el mercado corrija lo que el mercado creó no es una estrategia: es una condena.
+:::
+
+::: {.notas-tecnicas}
+**Notas Técnicas y Limitaciones**
+
+Las series de ingreso y pobreza laboral provienen de la **Encuesta Nacional de Ocupación y Empleo (ENOE)** del INEGI y del **Índice de la Tendencia Laboral de la Pobreza (ITLP)** del CONEVAL, con periodicidad trimestral. Los datos de trabajo no remunerado corresponden a la Cuenta Satélite del Trabajo no Remunerado de los Hogares de México (INEGI).
+
+**Limitaciones a considerar:**
+
+- El ingreso laboral reportado **no incluye transferencias gubernamentales** (Pensión para el Bienestar, Sembrando Vida, etc.), lo que puede subestimar el ingreso real de hogares en condición de pobreza.
+- Existe un **subregistro potencial en el sector informal**, ya que la ENOE capta empleo declarado; trabajadores sin contrato o en economías de subsistencia pueden estar sub-representados.
+- Las proyecciones se basan en modelos estadísticos (Holt-Winters, SARIMA, Prophet, Regresión Polinómica) y **no incorporan choques exógenos** futuros ni cambios de política pública. Deben interpretarse como escenarios exploratorios, no como pronósticos definitivos.
+- La brecha salarial calculada es **promedio ponderado por decil de ingreso**; no controla por ocupación, horas trabajadas ni nivel educativo, por lo que refleja desigualdad estructural agregada, no discriminación salarial pura.
+:::
 
 ::: footer-note
 Dashboard con datos de INEGI (ENOE) y CONEVAL (ITLP) · Equipo Typers — HackODS UNAM 2026

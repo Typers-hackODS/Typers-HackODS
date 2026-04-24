@@ -17,8 +17,8 @@
   --texto-muted:   #6b6560;
   --blanco:        #ffffff;
 
-  --font-display: 'Helvetica', Georgia, serif;
-  --font-body:    'Times New Roman', sans-serif;
+  --font-display: 'Montserrat', Georgia, serif;
+  --font-body:    'Lato', sans-serif;
 
   --radius: 12px;
   --sombra: 0 2px 12px rgba(0,0,0,0.07);
@@ -43,7 +43,7 @@ html, body {
   margin: 0 !important;
   padding: 0 !important;
   max-width: 100% !important;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .quarto-container,
@@ -113,10 +113,10 @@ body.fullcontent{
   justify-content: space-between;
   padding: 0rem 2.5rem;
   height: 56px;
-  position: sticky;
+  position: sticky !important;
   top: 0;
   z-index: 1000;
-  box-shadow: 1px solid rgba(0,0,0,0.4);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 .nav-header p {
   margin: 0;
@@ -251,6 +251,7 @@ body.fullcontent{
   padding: 0.8rem 1rem 0.8rem;
   box-shadow: var(--sombra);
   border-top: 3px solid var(--morado-claro);
+  position: relative;
 }
 .kpi-card-highlight {
   background: var(--morado-bg);
@@ -266,6 +267,7 @@ body.fullcontent{
   letter-spacing: 0.08em;
   color: var(--morado-claro);
   margin-bottom: 0.3rem;
+  padding-right: 2.8rem;
 }
 .kpi-card .kpi-value {
   font-family: var(--font-display);
@@ -279,6 +281,62 @@ body.fullcontent{
   font-size: 0.78rem;
   color: var(--texto-muted);
   line-height: 1.45;
+}
+
+/* KPI icon badge — top-right circular accent */
+.kpi-icon {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.9rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--morado-bg);
+  color: var(--morado);
+}
+.kpi-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: block;
+}
+/* Dual-icon variant (woman + man together) */
+.kpi-icon.kpi-icon-dual {
+  background: transparent;
+  width: auto;
+  gap: 0.15rem;
+  padding: 0;
+}
+.kpi-icon.kpi-icon-dual .kpi-icon-half {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.kpi-icon.kpi-icon-dual .kpi-icon-half svg {
+  width: 1rem;
+  height: 1rem;
+}
+.kpi-icon-half.kpi-icon-woman {
+  background: var(--morado-bg);
+  color: var(--morado);
+}
+.kpi-icon-half.kpi-icon-man {
+  background: var(--verde-bg);
+  color: var(--verde);
+}
+/* Per-KPI color accents (match card theming) */
+.kpi-stack .kpi-card:nth-child(2) .kpi-icon {
+  background: #FDECE5;
+  color: var(--alerta);
+}
+.kpi-stack .kpi-card:nth-child(3) .kpi-icon {
+  background: var(--morado-bg);
+  color: var(--morado-header);
 }
 
 /* ============================================================
@@ -424,6 +482,34 @@ body.fullcontent{
   line-height: 1.4;
 }
 
+/* Stretched link: hace que toda la tarjeta sea clickeable */
+.thumb-card a {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--azul);
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 0.3rem;
+}
+.thumb-card a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+/* Primera tarjeta con acento morado */
+.thumb-card.thumb-primary {
+  background: var(--morado-bg);
+  border-color: rgba(123, 47, 190, 0.25);
+}
+.thumb-card.thumb-primary .thumb-label {
+  color: var(--morado-header);
+}
+.thumb-card.thumb-primary:hover {
+  border-color: var(--morado);
+  box-shadow: 0 4px 18px rgba(123, 47, 190, 0.2);
+}
+
 /* ============================================================
    ACCIONES SECTION
    ============================================================ */
@@ -488,6 +574,170 @@ body.fullcontent{
   background-color: #f1f5f9;
   color: #475569;
   border: 1px solid #cbd5e1;
+}
+
+/* ============================================================
+   MARCO LEGAL
+   ============================================================ */
+.marco-legal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.ley-bloque {
+  background: white;
+  border-left: 4px solid var(--morado);
+  border-radius: var(--radius);
+  padding: 1.3rem 1.4rem 1.1rem;
+  box-shadow: var(--sombra);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ley-etiqueta {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--morado);
+  line-height: 1.3;
+}
+
+.ley-bloque blockquote {
+  margin: 0.2rem 0;
+  padding: 0 0 0 0.75rem;
+  border-left: 2px solid var(--morado-claro);
+  font-style: italic;
+  color: var(--texto);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.ley-bloque em {
+  font-size: 0.78rem;
+  color: var(--texto-muted);
+}
+
+.chip-realidad {
+  display: inline-block;
+  background: #FDECE5;
+  color: var(--alerta);
+  border: 1px solid var(--alerta);
+  border-radius: 999px;
+  padding: 0.18rem 0.65rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  margin-top: 0.2rem;
+  width: fit-content;
+}
+
+/* ============================================================
+   ACCIONES POR NIVEL
+   ============================================================ */
+.acciones-nivel-titulo {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--texto-muted);
+  text-transform: uppercase;
+  margin: 0.5rem 0 1.2rem;
+}
+
+.niveles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+  margin-bottom: 2.5rem;
+}
+
+.nivel-card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--sombra);
+  padding: 1.4rem 1.5rem;
+}
+
+.nivel-actor-label {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.7rem;
+  border-radius: 999px;
+  margin-bottom: 0.7rem;
+}
+
+.niveles-grid .nivel-card:nth-child(1) .nivel-actor-label {
+  background: rgba(43, 95, 168, 0.1);
+  color: var(--azul);
+}
+
+.niveles-grid .nivel-card:nth-child(2) .nivel-actor-label {
+  background: var(--verde-bg);
+  color: var(--verde);
+}
+
+.niveles-grid .nivel-card:nth-child(3) .nivel-actor-label {
+  background: var(--morado-bg);
+  color: var(--morado);
+}
+
+.nivel-card blockquote {
+  font-style: italic;
+  font-size: 0.88rem;
+  color: var(--texto-muted);
+  border-left: 3px solid var(--gris-borde);
+  padding-left: 0.8rem;
+  margin: 0.4rem 0 1.1rem;
+  line-height: 1.55;
+}
+
+.nivel-accion {
+  padding-top: 0.9rem;
+  margin-top: 0.9rem;
+  border-top: 1px solid var(--gris-borde);
+}
+
+.nivel-accion:first-of-type {
+  padding-top: 0;
+  margin-top: 0;
+  border-top: none;
+}
+
+.nivel-accion p:first-child strong {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.nivel-accion p:last-child {
+  font-size: 0.84rem;
+  color: var(--texto-muted);
+  line-height: 1.55;
+  margin-top: 0.2rem;
+}
+
+/* ============================================================
+   FRASE DE CIERRE
+   ============================================================ */
+.frase-cierre {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--morado-header);
+  line-height: 1.3;
+  padding: 2.8rem 3rem;
+  margin: 2.5rem 0 1.5rem;
+  background: var(--morado-bg);
+  border-top: 3px solid var(--morado);
+  border-bottom: 3px solid var(--morado);
+  border-radius: var(--radius);
 }
 
 /* ============================================================
@@ -617,13 +867,34 @@ body.fullcontent{
 }
 
 /* ============================================================
+   NOTAS TÉCNICAS
+   ============================================================ */
+.notas-tecnicas {
+  background: #f8f5ff;
+  border-left: 4px solid var(--morado);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.8rem;
+  margin: 2rem 0 1.5rem;
+  font-size: 0.93rem;
+  color: var(--texto-muted);
+}
+.notas-tecnicas strong {
+  color: var(--morado-header);
+  font-size: 1rem;
+}
+.notas-tecnicas ul, .notas-tecnicas p {
+  margin: 0.5rem 0 0;
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 760px) {
   .hero, .two-col.col-6-4, .two-col.col-4-6, .two-col.col-5-5,
-  .acciones-grid {
+  .acciones-grid, .marco-legal-grid, .niveles-grid {
     grid-template-columns: 1fr;
   }
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .hero-left h1 { font-size: 1.7rem; }
+  .frase-cierre { font-size: 1.35rem; padding: 2rem 1.5rem; }
 }
