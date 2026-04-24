@@ -277,7 +277,7 @@ fig2.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename'
 ```
 
 ::: chart-interpretation
-Consistentemente, un mayor porcentaje de mujeres ocupadas vive en pobreza laboral respecto a los hombres. A pesar de trabajar, su salario no es suficiente para cubrir la canasta alimentaria para ellas y sus familias.
+Históricamnete, ha existido un mayor porcentaje de mujeres ocupadas que vive en pobreza laboral respecto a los hombres. A pesar de trabajar, su salario no es suficiente para cubrir la canasta alimentaria.
 :::
 :::
 
@@ -311,10 +311,8 @@ Consistentemente, un mayor porcentaje de mujeres ocupadas vive en pobreza labora
 <!-- CHARTS 2 y 3: Ingreso promedio + Ratio salarial -->
 
 ::: section-title
-Por cada salario de un hombre, ¿cuánto gana una mujer?
+Mismo esfuerzo, distinto salario
 :::
-
-[Visualizando la disparidad. Históricamente, las mujeres en México perciben menos del 80% del salario masculino.]{.section-subtitle}
 
 ::::: {.two-col .col-5-5}
 ::: {#chart-ingreso .chart-card .section-anchor}
@@ -384,7 +382,7 @@ fig.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename':
 ```
 
 ::: chart-interpretation
-La brecha entre los salarios promedio de hombres y mujeres se ha mantenido constante durante casi dos décadas. Esta es la raíz de la vulnerabilidad económica femenina: el punto de partida estructural es desigual.
+El punto de partida es desigual. Durante dos décadas, la brecha salarial se ha mantenido constante, convirtiéndose en la raíz de la vulnerabilidad económica femenina.
 :::
 :::
 
@@ -416,7 +414,7 @@ fig3.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename'
 ```
 
 ::: chart-interpretation
-La paridad del 100% parece inalcanzable; las mujeres han ganado siempre menos del 85% de lo que gana un hombre por hacer el mismo esfuerzo. Cada punto porcentual menos significa comida y servicios básicos que una familia trabajadora no puede pagar.
+Alcanzar la paridad del 100% parece imposible; las mujeres han ganado un 85% menos en comparación a los hombres por hacer el mismo trabajo. Cada punto porcentual menos significa comida y servicios básicos que una familia no puede cubrir.
 :::
 :::
 :::::
@@ -424,10 +422,8 @@ La paridad del 100% parece inalcanzable; las mujeres han ganado siempre menos de
 <!-- CHART 4: Mapa por entidad federativa -->
 
 ::: section-title
-¿Dónde es más profunda la brecha? La desigualdad también tiene geografía
+La desigualdad también tiene geografía
 :::
-
-[El ingreso promedio ponderado por rango salarial revela que la brecha no es homogénea: entidades con mayor informalidad concentran las disparidades más amplias.]{.section-subtitle}
 
 ::: chart-card
 [DISPARIDAD SALARIAL ENTRE HOMBRES Y MUJERES POR ENTIDAD FEDERATIVA (Q4 2025)]{.chart-title}
@@ -471,7 +467,7 @@ fig.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename':
 :::
 
 ::: chart-interpretation
-**Las 3 entidades con mayor brecha**
+**Las 3 entidades con mayor brecha:**
 La brecha es sistemáticamente más profunda en estados con economías rurales y alta informalidad como Guerrero e Hidalgo.
 
 **Nota de regionalización:** Las entidades con mayor concentración de informalidad y economías predominantemente rurales — Hidalgo, Colima y Guerrero — registran las brechas más pronunciadas del país. Estas regiones combinan altas tasas de subempleo femenino con acceso limitado a empleos formales, lo que amplifica la distancia salarial respecto a entidades industrializadas como Baja California o Ciudad de México.
@@ -485,10 +481,8 @@ La brecha es sistemáticamente más profunda en estados con economías rurales y
 
 :::::::::: {#causas .section-anchor}
 ::: section-title
-El tiempo robado: por qué la brecha no se cierra sola
+La deuda invisible que traspasa generaciones
 :::
-
-[La brecha salarial no es un accidente del mercado. Tres causas estructurales la sostienen — y ninguna se resolverá sin política pública específica.]{.section-subtitle}
 
 
 <!-- ── BRECHA GENERACIONAL (izq) + SEGUNDA JORNADA (der) ───────────────── -->
@@ -560,7 +554,7 @@ fig_gen.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filena
 ```
 
 ::: chart-interpretation
-La brecha **no disminuye con las nuevas generaciones, crece con la edad**: 14% en la Gen Z al 24.3% en mayores de 60 años. Cada década de vida laboral amplía el costo de ser mujer en México — la paridad generacional es una ilusión estadística. La brecha es **acumulativa**: se hereda y se profundiza con cada etapa del ciclo de vida.
+La brecha es acumulativa. Cada década de vida laboral amplia el costo de ser mujer en México, desde el  14% en la Gen Z al 24.3% en mujeres mayores de 60 años.
 :::
 :::
 
@@ -640,7 +634,7 @@ fig_horas.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'file
 ```
 
 ::: chart-interpretation
-Una mujer dedica **8.03** horas/semana al trabajo no remunerado del hogar; un hombre, **4.15**. La asimetría máxima está en cuidados y alimentos (3× a 4× más). Esta jornada invisible explica por qué muchas mujeres terminan en empleos informales o de medio tiempo.
+Una mujer dedica **8.03** horas/semana al trabajo no remunerado del hogar; un hombre, **4.15**. Es decir, una carga 3 a 4 veces mayor, lo cual resulta en que muchas mujeres terminen en empleos informales o de medio tiempo forzosamente.
 :::
 :::
 
@@ -741,10 +735,8 @@ La cuenta satélite del INEGI dimensiona lo invisible: el trabajo no remunerado 
 <!-- ── CAUSA 2: La informalidad como trampa ───────────────────────────────── -->
 
 ::: section-title
-Los mecanismos de la trampa: informalidad y correlación
+Informal por necesidad, pobre por consecuencia
 :::
-
-[La informalidad laboral y la brecha salarial no son problemas aislados — se retroalimentan para mantener a las mujeres en la pobreza.]{.section-subtitle}
 
 ::::: {.two-col .col-5-5}
 ::: {#chart-informal .chart-card .section-anchor}
@@ -855,7 +847,7 @@ fig5.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename'
 ```
 
 ::: chart-interpretation
-La tendencia señala que cuando la brecha salarial se dispara, la incidencia de pobreza en mujeres aumenta. Ambas variables coexisten como síntomas de un mercado laboral que empobrece a quienes menos ganan de origen.
+La carga desproporcionada de trabajo no remunerado actúa como una barrera que empuja a las mujeres hacia la informalidad. Mientras los hombres tienen mayor disponibilidad para el sector formal, ellas enfrentan una precariedad estructural donde la falta de tiempo se traduce en menores ingresos.
 :::
 :::
 :::::
@@ -863,10 +855,8 @@ La tendencia señala que cuando la brecha salarial se dispara, la incidencia de 
 <!-- ── JEFATURA (izq) + EVOLUCIÓN BRECHA (der) ──────────────────────────── -->
 
 ::: section-title
-La brecha que crece con la edad
+La pobreza tiene rostro de mujer
 :::
-
-[La desigualdad no es estática: se acumula y profundiza con cada etapa del ciclo de vida laboral, dejando a las mujeres mayores en la posición más vulnerable.]{.section-subtitle}
 
 ::::: {.two-col .col-5-5}
 
@@ -906,7 +896,7 @@ fig6.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename'
 ```
 
 ::: chart-interpretation
-Si una mujer es jefa de hogar, la probabilidad de que su familia esté en pobreza laboral supera ampliamente a los hogares liderados por hombres. Esto muestra una profunda debilidad estructural en el sustento de miles de familias.
+Si una mujer es jefa de hogar, la probabilidad de que su familia esté en pobreza laboral supera ampliamente a los hogares liderados por hombres. Queda en evidencia la debilidad estructural en el sustento de miles de familias mexicanas.
 :::
 :::
 
@@ -938,7 +928,7 @@ fig7.show(config={'displayModeBar': 'hover', 'toImageButtonOptions': {'filename'
 ```
 
 ::: chart-interpretation
-La tendencia secular muestra estancamiento, la desigualdad de género económica no está disminuyendo de la manera esperada. Las medidas existentes no logran penetrar la inercia del mercado.
+El comportamiento de la tendencia muestra estancamiento, la desigualdad de género económica no disminuye de la manera esperada. 
 :::
 :::
 
@@ -1221,7 +1211,7 @@ fig_tabla.show(config={'displayModeBar': False})
 ```
 
 ::: chart-interpretation
-La tabla revela el rango de escenarios posibles para 2034. En brecha salarial, SARIMA es el modelo más optimista (7.6%) mientras que la Regresión Polinómica advierte sobre una persistencia estructural (24.3%). En ingresos, todos los modelos proyectan crecimiento nominal, pero si la brecha persiste, el incremento absoluto beneficiará desproporcionadamente a los hombres. La comparación entre modelos no busca decir cuál tiene razón, sino subrayar que el futuro es político: las proyecciones más optimistas solo son alcanzables con políticas activas de igualdad salarial, formalización del empleo femenino y sistemas de cuidados.
+La tabla revela el rango de escenarios posibles para 2034. En brecha salarial, SARIMA es el modelo más optimista (7.6%) mientras que la Regresión Polinómica advierte sobre una persistencia estructural (24.3%). En ingresos, todos los modelos proyectan crecimiento nominal, pero si la brecha persiste, el incremento absoluto beneficiará desproporcionadamente a los hombres. 
 :::
 :::
 ::::::::::
@@ -1232,11 +1222,11 @@ La tabla revela el rango de escenarios posibles para 2034. En brecha salarial, S
 
 ::: cta-block
 
-[Los datos son contundentes:]{.cta-eyebrow}
+[Los datos no mienten:]{.cta-eyebrow}
 
 ## Si la tendencia actual continúa, la brecha salarial se reducirá, pero no se erradicará la pobreza laboral femenina. {.cta-headline}
 
-Las proyecciones muestran que, incluso en el escenario más optimista, **millones de mujeres seguirán trabajando sin poder escapar de la pobreza.** El crecimiento económico por sí solo no corrige una desigualdad estructural. **Debemos tomar acciones deliberadas para cerrar la brecha salarial de género** — porque esperar a que el mercado resuelva lo que el mercado ha creado no es una opción.
+Las proyecciones demuestran que, incluso en el escenario más optimista, **millones de mujeres seguirán trabajando sin poder escapar de la pobreza.** El crecimiento económico por sí solo no corrige una desigualdad estructural. 
 
 :::
 
@@ -1248,13 +1238,11 @@ Las proyecciones muestran que, incluso en el escenario más optimista, **millone
 
 :::::::::::: {#acciones .section-anchor}
 ::: section-title
-¿Qué hacer? Acciones para cerrar la brecha
+La ley ya lo dice. El mercado no lo cumple
 :::
 
-[La ley ya lo dice. El mercado no lo cumple.]{.section-subtitle}
-
 ::: acciones-intro
-México tiene el marco legal para cerrar la brecha. El problema no es la ausencia de normas — es la ausencia de consecuencias cuando se incumplen.
+México cuenta con el marco legal para cerrar la brecha. El problema no es la ausencia de normas — es la ausencia de consecuencias cuando se incumplen.
 :::
 
 <!-- Marco legal vigente -->
